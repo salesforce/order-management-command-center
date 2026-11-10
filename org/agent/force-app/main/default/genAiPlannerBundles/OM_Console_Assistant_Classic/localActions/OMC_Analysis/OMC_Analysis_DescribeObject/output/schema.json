@@ -1,0 +1,22 @@
+{
+  "unevaluatedProperties": false,
+  "properties": {
+    "schema": {
+      "title": "Schema",
+      "description": "JSON: the objects, or the object's fields and child relationships",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    },
+    "error": {
+      "title": "Error",
+      "description": "Why the object could not be described",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}

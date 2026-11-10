@@ -1,0 +1,165 @@
+/*
+ * Copyright (c) 2026, Salesforce, Inc.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Design tokens for the Salesforce Order Management Operations Console and OM Service Console: one file, so both apps look like one product in all three themes.
+   Two layers:
+   1. Theme colours, one block per theme (Standard, Salesforce Light, Salesforce Dark). Every hex colour lives here and only
+      here. A page sets the theme with data-theme on <html> before first paint (no attribute is Standard).
+   2. Scale and component tokens: space, radius, type, elevation, motion, layers, and the buttons, tags, fields, cards,
+      popovers, tables and charts built from them. These hold no colours of their own, only the theme colours above.
+   Pages style with the tokens and keep layout (grids, widths, positions) to themselves. docs/design-tokens.md lists them;
+   design/ shows them in each theme. */
+
+/* Standard: the apps' own dark theme. */
+:root{
+  /* Surfaces, lowest to highest, and lines: --line divides, --line2 outlines a control (3:1 on every surface). */
+  --bg:#0B1322; --panel:#121D30; --panel2:#18263D; --raise:#1E2E49; --line:#233553; --line2:#5F79A2;
+  /* Text: body, secondary, and the quietest that still reaches 4.5:1. */
+  --ink:#E8EEF8; --ink2:#AEBBD2; --muted:#8B9BB7;
+  /* Accents: action, its lighter partner, then good, warning, bad, and Agentforce. */
+  --signal:#4FB3FF; --signal2:#9AD4FF; --green:#3DDC97; --amber:#F5B544; --red:#FF6B7A; --agent:#A58BFF;
+  /* Text on a filled accent, the page's backdrop glow, overlays, and the neutral tag fills. */
+  --on-accent:#07121F; --bg-grad:#13233D; --scrim:rgba(4,9,18,.55); --shade:#000; --chip:#22334F; --chip2:#2B3F62;
+  /* Map: land, its outline, and labels on data fills (--lbl on dark fills, --lbl-ink on light ones). */
+  --land:#15243C; --land-line:#35507A; --lbl:#07121F; --lbl-ink:var(--ink);
+  --font:"Archivo",system-ui,sans-serif;
+  /* Charts. --d1…--d6 are the categorical series, always in this order. --ramp1…4 is sequential (low to high).
+     --st1…4 are an order's steps (early to late), then done, failed, warning and running; --st-o1…3 is anything else. */
+  --d1:#4FB3FF; --d2:#F472B6; --d3:#3DDC97; --d4:#F5B544; --d5:#7C8CFF; --d6:#5A9AE6;
+  --ramp1:#26568F; --ramp2:#3A78C2; --ramp3:#5A9AE6; --ramp4:#93C5FF;
+  --st1:#26568F; --st2:#3A78C2; --st3:#5A9AE6; --st4:#93C5FF; --st-done:#22A36E; --st-fail:#E0475A; --st-warn:#F5B544; --st-run:#5A9AE6;
+  --st-o1:#6B7C99; --st-o2:#8A99B3; --st-o3:#4E5E7A;
+  /* Brand: the logo mark, a person's initials, and the white a product photo sits on in every theme. */
+  --brand-grad:linear-gradient(135deg,#1F6FB2,#4FB3FF); --img-bg:#ffffff;
+}
+/* Salesforce themes: SLDS2 (Cosmos) light and dark values. Data colours keep Standard's hue order at 3:1 or better on --panel. */
+:root[data-theme="slds-light"]{
+  --bg:#f3f3f3; --panel:#ffffff; --panel2:#f3f3f3; --raise:#eef4ff; --line:#c9c9c9; --line2:#5c5c5c;
+  --ink:#2e2e2e; --ink2:#5c5c5c; --muted:#6e6e6e;
+  --signal:#0170c8; --signal2:#0b5cab; --green:#2c7d46; --amber:#825101; --red:#df001d; --agent:#5a3ec8;
+  --on-accent:#ffffff; --bg-grad:#eef4ff; --scrim:rgba(0,0,0,.35); --shade:rgba(0,0,0,.3); --chip:#e5e5e5; --chip2:#e5e5e5;
+  --land:#e5e5e5; --land-line:#c9c9c9; --lbl:#ffffff; --lbl-ink:#032d60;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --d1:#0176d3; --d2:#c9246f; --d3:#2e844a; --d4:#a96404; --d5:#5867e8; --d6:#0b827c;
+  --ramp1:#aacbff; --ramp2:#78b0fd; --ramp3:#0b5cab; --ramp4:#014486;
+  --st1:#032d60; --st2:#014486; --st3:#0b5cab; --st4:#0176d3; --st-done:#2e844a; --st-fail:#ba0517; --st-warn:#a96404; --st-run:#0b5cab;
+  --st-o1:#747474; --st-o2:#8c8c8c; --st-o3:#5c5c5c;
+}
+:root[data-theme="slds-dark"]{
+  --bg:#181818; --panel:#242424; --panel2:#2e2e2e; --raise:#2e2e2e; --line:#444444; --line2:#787878;
+  --ink:#e5e5e5; --ink2:#aeaeae; --muted:#969696;
+  --signal:#2199ff; --signal2:#78b0fd; --green:#40a959; --amber:#de7d06; --red:#fe6151; --agent:#a58bff;
+  --on-accent:#07121f; --bg-grad:#03234d; --scrim:rgba(0,0,0,.55); --shade:#000; --chip:#3a3a3a; --chip2:#3a3a3a;
+  --land:#2e2e2e; --land-line:#444444; --lbl:#07121f; --lbl-ink:#e5e5e5;
+  --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --d1:#1b96ff; --d2:#ff5d9e; --d3:#3ba755; --d4:#dd7a01; --d5:#8a8fff; --d6:#08abed;
+  --ramp1:#014486; --ramp2:#0b5cab; --ramp3:#1b96ff; --ramp4:#78b0fd;
+  --st1:#0176d3; --st2:#1b96ff; --st3:#78b0fd; --st4:#c3d9ff; --st-done:#3ba755; --st-fail:#fe5c4c; --st-warn:#dd7a01; --st-run:#78b0fd;
+  --st-o1:#8f8f8f; --st-o2:#aeaeae; --st-o3:#757575;
+}
+
+/* Scale and components. No colours here: only the theme's, through var(). Values below are the ones the apps already
+   used most, so a component keeps its look when it moves to them. */
+:root{
+  /* Space: gaps and padding inside components. --gutter is a page's edge. */
+  --sp-1:2px; --sp-2:4px; --sp-3:6px; --sp-4:8px; --sp-5:10px; --sp-6:12px; --sp-7:14px; --sp-8:16px; --sp-9:20px; --sp-10:24px; --sp-11:32px;
+  --gutter:20px;
+
+  /* Radius: xs a bar's end, sm a square tag, md a control, lg a popover or note, xl (--r) a card, 2xl a dialog. */
+  --radius-xs:3px; --radius-sm:5px; --radius-md:8px; --radius-lg:10px; --radius-xl:12px; --radius-2xl:16px; --radius-pill:999px; --radius-round:50%;
+  --r:var(--radius-xl);
+
+  /* Type. Sizes are the apps' own steps: 12.5px is a control's, 13px a dense table's, 14px the body's. */
+  --font-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --fs-3xs:10.5px; --fs-2xs:11px; --fs-xs:11.5px; --fs-sm:12px; --fs-md:12.5px; --fs-base:13px; --fs-body:14px;
+  --fs-lg:16px; --fs-xl:18px; --fs-2xl:20px; --fs-3xl:22px; --fs-4xl:24px; --fs-kpi:30px; --fs-hero:48px;
+  --fw-normal:400; --fw-medium:500; --fw-semibold:600; --fw-display:650; --fw-bold:700; --fw-black:800;
+  --lh-tight:1.1; --lh-body:1.45;
+  /* Archivo is a variable-width face: headings and big numbers run narrower. Other fonts ignore it. */
+  --stretch-title:85%; --stretch-figure:78%;
+  /* Uppercase labels: a field's or KPI's (--label-*), a table header's (--th-*), a section's (--section-*). */
+  --label-size:var(--fs-xs); --label-track:.07em;
+  --th-size:var(--fs-2xs); --th-track:.06em;
+  --section-size:var(--fs-sm); --section-track:.08em;
+
+  /* Elevation: a menu, a popover or tooltip, a dialog or drawer. */
+  --shadow-1:0 8px 24px color-mix(in srgb,var(--shade) 35%,transparent);
+  --shadow-2:0 12px 30px color-mix(in srgb,var(--shade) 40%,transparent);
+  --shadow-3:0 30px 80px color-mix(in srgb,var(--shade) 35%,transparent);
+
+  /* Motion. Pages turn animation off under prefers-reduced-motion. */
+  --dur-fast:.15s; --dur-med:.25s; --dur-slow:.7s;
+  --ease-out:ease-out; --ease-pop:cubic-bezier(.2,.9,.3,1.2); --ease-settle:cubic-bezier(.2,.8,.2,1);
+
+  /* Layers, low to high. */
+  --z-raised:1; --z-float:5; --z-header:9; --z-scrim:10; --z-drawer:11; --z-agent:12; --z-menu:20; --z-toast:30; --z-full:50;
+
+  /* Focus: the same ring on everything that takes focus. */
+  --focus-ring:2px solid var(--signal); --focus-offset:2px;
+  /* Agentforce's next step: the ring on what to press next in a change Agentforce filled in, in Agentforce's colour, and the halo
+     that pulses out from it (held still under prefers-reduced-motion). */
+  --next-ring:2px solid var(--agent); --next-offset:3px; --next-glow:color-mix(in srgb,var(--agent) var(--tint-line),transparent); --next-pulse:1.6s;
+
+  /* Tints: how much of a tone goes into a tinted fill, a tinted outline, a selected state and a soft alert. A tinted fill
+     costs text contrast, so text in a tone on one mixes in --ink (--tint-ink of the tone), and --muted text on one steps up
+     to --ink2; otherwise it falls under 4.5:1. */
+  --tint-fill:16%; --tint-line:45%; --tint-on:13%; --tint-alert:10%; --tint-row:8%; --tint-ink:70%;
+
+  /* Buttons: default, primary (one per view, the next step), danger (changes or cancels something), ghost, link. */
+  --btn-pad:6px 12px; --btn-radius:var(--radius-md); --btn-weight:var(--fw-semibold);
+  --btn-bg:var(--panel2); --btn-line:var(--line2); --btn-hover-line:var(--signal);
+  --btn-primary-bg:var(--signal); --btn-primary-ink:var(--on-accent);
+  --btn-danger-bg:var(--amber); --btn-danger-ink:var(--on-accent);
+  --btn-ghost-ink:var(--ink2);
+  --btn-sm-pad:2px 8px; --btn-sm-size:var(--fs-sm);
+  --btn-lg-pad:10px 20px; --btn-lg-size:15px;
+  --btn-disabled-opacity:.5;
+
+  /* Tags. A pill is a status (filled, neutral or toned). A badge is a fact about a record (outlined). A chip is a filter
+     you can press. A square tag is a severity, a kind or a count. Toned ones mix --tint-fill or --tint-line of their tone. */
+  --tag-size:var(--fs-xs); --tag-pad:2px 8px; --tag-radius:var(--radius-pill); --tag-bg:var(--chip); --tag-ink:var(--ink2);
+  --badge-line:var(--line2);
+  --chip-size:var(--fs-sm); --chip-pad:3px 10px; --chip-line:var(--line2);
+  --tag-square-size:var(--fs-2xs); --tag-square-pad:2px 7px; --tag-square-radius:var(--radius-sm); --tag-square-bg:var(--chip2); --tag-square-weight:var(--fw-bold);
+  --dot-size:8px;
+
+  /* Fields: text inputs, selects and textareas. */
+  --field-bg:var(--bg); --field-line:var(--line2); --field-focus:var(--signal); --field-radius:var(--radius-md); --field-pad:7px 10px;
+
+  /* Cards and panels. A card sits on the page; a raised surface inside one uses --panel2. */
+  --card-bg:var(--panel); --card-line:var(--line); --card-radius:var(--r); --card-pad:14px 16px;
+
+  /* Popovers: menus, tooltips, search results. Dialogs and drawers use --shadow-3. */
+  --pop-bg:var(--panel); --pop-line:var(--line2); --pop-radius:var(--radius-lg); --pop-shadow:var(--shadow-1);
+
+  /* Tables. */
+  --th-ink:var(--muted); --th-weight:var(--fw-medium); --cell-pad:8px 14px; --row-line:var(--line); --row-hover:var(--panel2);
+
+  /* Charts. Series colours are --d1…--d6 (above); these are what's around them. A bar's track is --chart-track, its end
+     rounded --chart-bar-radius; a mark on the chart is outlined in --chart-mark-line so marks read apart. */
+  --chart-grid:var(--line); --chart-axis:var(--muted); --chart-axis-size:var(--fs-2xs);
+  --chart-track:var(--chip); --chart-bar:6px; --chart-bar-radius:var(--radius-xs);
+  --chart-hover:color-mix(in srgb,var(--signal) 6%,transparent); --chart-mark-line:var(--bg);
+  --chart-key:9px; --chart-key-radius:2px;
+}
+
+/* Windows high contrast (forced colours): the system repaints both apps in its own colours and drops backgrounds and
+   shadows. Keep what they carried: which chip, tab, option or menu item is selected, and the focus ring. Only system
+   colour names here, never a theme colour. */
+@media (forced-colors:active){
+  button.on,[aria-pressed="true"],[aria-selected="true"],[aria-checked="true"]{forced-color-adjust:none;background:Highlight;color:HighlightText;border-color:Highlight}
+  :focus-visible{outline-color:Highlight}
+}

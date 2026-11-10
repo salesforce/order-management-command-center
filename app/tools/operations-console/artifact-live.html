@@ -1,0 +1,96 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026, Salesforce, Inc.
+  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salesforce Order Management Operations Console · Live briefing</title>
+<!-- The viewer's connector tool name, written in by cowork-skill/configure.py when the page is published. -->
+<script id="omc-tools" type="application/json">{"__placeholder":"OMC_TOOLS"}</script>
+<style>
+  :root {
+    --bg:#f3f3f3; --panel:#ffffff; --panel2:#f3f3f3; --line:#c9c9c9; --ink:#2e2e2e; --ink2:#5c5c5c; --muted:#6e6e6e;
+    --signal:#0170c8; --green:#2c7d46; --amber:#825101; --red:#df001d; --on-accent:#ffffff; --r:12px;
+    --font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#181818; --panel:#242424; --panel2:#2e2e2e; --line:#444444; --ink:#e5e5e5; --ink2:#aeaeae; --muted:#969696;
+      --signal:#2199ff; --green:#40a959; --amber:#de7d06; --red:#fe6151; --on-accent:#07121f; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.45 var(--font); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 14px 20px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 700; font-size: 16px; margin: 0; }
+  .brand .sub { font-weight: 400; color: var(--ink2); margin-left: 6px; }
+  .status { display: flex; align-items: center; gap: 10px; color: var(--ink2); font-size: 13px; }
+  .pill { padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line); font-weight: 600; }
+  .pill[data-kind="on"] { color: var(--green); border-color: currentColor; }
+  .pill[data-kind="off"] { color: var(--red); border-color: currentColor; }
+  .pill[data-kind="wait"] { color: var(--amber); border-color: currentColor; }
+  button { font: inherit; padding: 5px 14px; border-radius: 8px; border: 0; background: var(--signal); color: var(--on-accent); cursor: pointer; }
+  button:disabled { opacity: .55; cursor: default; }
+  main { padding: 18px 20px 8px; max-width: 1200px; margin: 0 auto; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink2); margin: 18px 0 10px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .tile, .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+  .tile .k { color: var(--ink2); font-size: 12px; }
+  .tile .v { font-size: 24px; font-weight: 700; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .tile .sub { color: var(--muted); font-size: 12px; }
+  .tile .split { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 6px; font-size: 12px; color: var(--ink2); }
+  .tile.off .v { color: var(--muted); }
+  .note { color: var(--muted); font-size: 12px; margin: 4px 0 0; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px; margin-top: 18px; }
+  .card h3 { margin: 0 0 8px; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 600; color: var(--ink2); border-bottom: 1px solid var(--line); padding: 4px 6px; }
+  td { padding: 5px 6px; border-bottom: 1px solid var(--panel2); font-variant-numeric: tabular-nums; }
+  .needs { max-width: 640px; margin: 40px auto; }
+  .needs h2 { color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 18px; margin-top: 0; }
+  .needs .why { color: var(--muted); }
+  footer { color: var(--muted); font-size: 12px; text-align: center; padding: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1 class="brand">Salesforce Order Management Operations Console<span class="sub">Live briefing</span></h1>
+  <div class="status"><span id="state" class="pill" data-kind="wait" role="status">Starting…</span><span id="at"></span><button id="refresh" type="button">Refresh</button></div>
+</header>
+<main>
+  <section id="needs" class="card needs" hidden>
+    <h2>Connect Salesforce to see live data</h2>
+    <p class="how">This page reads Order Management through your own <b>Salesforce</b> connector in Claude, with your own Salesforce sign-in.
+      Connect your organization's Headless 360 custom connector under <b>Customize → Connectors</b> and sign in to your org. Then ask Claude in Cowork to "publish the OM live briefing", and reload this page.</p>
+    <p class="why"></p>
+  </section>
+  <section id="live" hidden>
+    <h2>Since yesterday</h2>
+    <div id="today" class="tiles"></div>
+    <h2>Open now</h2>
+    <div id="open" class="tiles"></div>
+    <div class="grid">
+      <article id="stuckByLocation" class="card"><h3>Stuck by location</h3><div class="body"></div></article>
+      <article id="stuck" class="card"><h3>Oldest stuck fulfillment orders</h3><div class="body"></div></article>
+      <article id="newlyStuck" class="card"><h3>Just went quiet</h3><div class="body"></div></article>
+      <article id="latestExceptions" class="card"><h3>Latest open exceptions</h3><div class="body"></div></article>
+    </div>
+  </section>
+</main>
+<footer>Read-only: every figure comes from your own Salesforce connector, which this page may only ask for reads.</footer>
+</body>
+</html>

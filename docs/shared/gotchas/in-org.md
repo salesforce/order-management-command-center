@@ -1,0 +1,14 @@
+# Inside Salesforce: the app domain's session and Apex
+
+Why the in-org console reaches the org through Apex (`SomConsoleRead`) and GraphQL, and what Apex can and can't call
+for it. Read this before you change `platform-runtime.js`, the Apex classes in `org/`, or anything that needs a new API
+in-org.
+
+- **Inside Salesforce, the app domain's session can't call Connect REST:** it answers `INVALID_SESSION_ID`, while GraphQL and Apex REST work (a demo org, 2026-10-14). Apex gets the same session ("This session is not valid for use with the REST API"), so it can't call the API for the page either. So in-org, everything goes through Apex:
+  - stock, delivery estimates, and Order Management's product search and details through `SomConsoleRead` (`ConnectApi.Repricing` is the Apex form of `/commerce/order-management/webstores/{id}/products`, with the same answer);
+  - an API with no Apex method can't be reached with the page's session. A fulfillment order's routing explanation is one: core serves it over Connect REST only.
+  - The session-ID route doesn't work: `UserInfo.getSessionId()` from the app domain is the same limited session. A per-user named credential (External Client App, Auth Provider, External Credential with a per-user principal) is the supported way for Apex to call this org's REST API as the user.
+- **Why the app domain's session is limited** (core source, 264): its session type is `SF_APP`, and `LightningRequestHandler` accepts it only on hard-coded path lists (UI API, GraphQL, `/connect/communities`, a few more) plus Apex REST. No org setting widens it. Commerce checkout's Connect families are hidden from Apex (`@ConnectHidden`), and Order on Behalf Of itself calls checkout through internal Aura controllers, not REST.
+- **Apex can't run most standard actions:** `Invocable.Action.createStandardAction(name).invoke()` throws `"<name>" isn't a valid action type` for the cart, checkout, exchange and Order Management actions (a demo org, 2026-10-14). Core keeps an Apex blocklist (`inApexBlocklist`), and these are on it. Use the typed `ConnectApi` method instead.
+- **Apex names ignore case:** a local `ro` hides a constant `RO` ("Comparison arguments must be compatible types"), and `Id.valueOf` in a class with a constant `ID` is that string's `String.valueOf` (use `System.Id.valueOf`). A permission set's description is at most 255 characters, or the whole deploy fails.
+- **The console opens inside Order Management** (`standard__OMConsole`), as a web tab framing its StartUrl: the app domain sends `frame-ancestors` for the org's Lightning domain. The LWC `somConsoleFrame` (`org/console-app`) frames the console on a record page at `?order=<recordId>`. It's deployed but on no page for now: it was briefly a tab on Order Management's Order Summary page. Lightning's `frame-src` doesn't list the app domain, so the frame needs the `SOM_Console_App` trusted URL. See `org/oms-app/README.md`.
