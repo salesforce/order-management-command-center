@@ -1,0 +1,13 @@
+{
+  "unevaluatedProperties": false,
+  "properties": {
+    "objectName": {
+      "title": "Object",
+      "description": "The API name of an Order Management object, such as OrderSummary or FulfillmentOrder; leave empty to list the objects",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2026, Salesforce, Inc.
+  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>68.0</apiVersion>
+    <description>Salesforce Order Management Operations Console on an Order Summary record page: frames its Multi-Framework app, opened at this order (?order=).</description>
+    <isExposed>true</isExposed>
+    <masterLabel>Salesforce Order Management Operations Console</masterLabel>
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="consoleUrl" type="String" label="Console address" default="https://yourdomain--c.my.salesforce.app/app/c__SOM_Console" description="The app's StartUrl: SELECT StartUrl FROM AppMenuItem WHERE Name = 'SOM_Console'. The default is a placeholder: replace yourdomain with your org's My Domain."/>
+            <property name="view" type="String" label="Opens on" datasource="details,activity,timeline" default="details"/>
+            <property name="height" type="Integer" label="Height (px)" default="1000" min="400"/>
+            <objects>
+                <object>OrderSummary</object>
+            </objects>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

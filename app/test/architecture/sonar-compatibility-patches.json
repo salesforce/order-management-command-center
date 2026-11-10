@@ -1,0 +1,50 @@
+{
+  "console-charts.js": {
+    "rule": "javascript:S2189",
+    "reason": "Make calendar cursor assignment explicit while preserving local calendar arithmetic.",
+    "patches": [
+      {
+        "before": "  const pad = (n) => String(n).padStart(2, '0'), MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\n  if (grain === 'hour') for (let h = 0; h <= now.getHours(); h++) out.push({ key: String(h), label: `${(h % 12) || 12}${h < 12 ? 'a' : 'p'}`, long: `${(h % 12) || 12}:00 ${h < 12 ? 'AM' : 'PM'}`, n: by[h] || 0 });\n  else if (grain === 'day') for (let d = new Date(from); d <= now; d.setDate(d.getDate() + 1)) { const k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; out.push({ key: k, label: `${MON[d.getMonth()]} ${d.getDate()}`, long: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }), n: by[k] || 0 }); }\n  else {\n    const keys = Object.keys(by).sort(), s0 = from ? new Date(from) : keys.length ? new Date(+keys[0].slice(0, 4), +keys[0].slice(5) - 1, 1) : now;\n    for (let d = new Date(s0.getFullYear(), s0.getMonth(), 1); d <= now; d.setMonth(d.getMonth() + 1)) { const k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; out.push({ key: k, label: d.getMonth() === 0 || !out.length ? `${MON[d.getMonth()]} '${String(d.getFullYear()).slice(2)}` : MON[d.getMonth()], long: `${MON[d.getMonth()]} ${d.getFullYear()}`, n: by[k] || 0 }); }\n  }\n  return out;\n",
+        "after": "  const pad = (n) => String(n).padStart(2, '0'), MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];\n  if (grain === 'hour') for (let h = 0; h <= now.getHours(); h++) out.push({ key: String(h), label: `${(h % 12) || 12}${h < 12 ? 'a' : 'p'}`, long: `${(h % 12) || 12}:00 ${h < 12 ? 'AM' : 'PM'}`, n: by[h] || 0 });\n  else if (grain === 'day') for (let d = new Date(from); d <= now; d = new Date(d.setDate(d.getDate() + 1))) { const k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; out.push({ key: k, label: `${MON[d.getMonth()]} ${d.getDate()}`, long: d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }), n: by[k] || 0 }); }\n  else {\n    const keys = Object.keys(by).sort(), s0 = from ? new Date(from) : keys.length ? new Date(+keys[0].slice(0, 4), +keys[0].slice(5) - 1, 1) : now;\n    for (let d = new Date(s0.getFullYear(), s0.getMonth(), 1); d <= now; d = new Date(d.setMonth(d.getMonth() + 1))) { const k = `${d.getFullYear()}-${pad(d.getMonth() + 1)}`; out.push({ key: k, label: d.getMonth() === 0 || !out.length ? `${MON[d.getMonth()]} '${String(d.getFullYear()).slice(2)}` : MON[d.getMonth()], long: `${MON[d.getMonth()]} ${d.getFullYear()}`, n: by[k] || 0 }); }\n  }\n  return out;\n"
+      }
+    ]
+  },
+  "console-drawers.js": {
+    "rule": "javascript:S2189",
+    "reason": "Make calendar cursor assignment explicit while preserving local calendar arithmetic.",
+    "patches": [
+      {
+        "before": "    if (span > 36 * 3600e3) {\n      const step = Math.max(1, Math.ceil(span / 864e5 / 9)), t = new Date(a); t.setHours(0, 0, 0, 0);\n      for (t.setDate(t.getDate() + 1); +t < b; t.setDate(t.getDate() + step)) out.push([+t, hxDay(t, false)]);\n    } else {\n      const step = (span <= 6 * 3600e3 ? 1 : span <= 14 * 3600e3 ? 2 : 3) * 3600e3, t = new Date(a); t.setMinutes(0, 0, 0);\n",
+        "after": "    if (span > 36 * 3600e3) {\n      const step = Math.max(1, Math.ceil(span / 864e5 / 9)), t = new Date(a); t.setHours(0, 0, 0, 0);\n      for (let tick = t.setDate(t.getDate() + 1); tick < b; tick = t.setDate(t.getDate() + step)) out.push([tick, hxDay(t, false)]);\n    } else {\n      const step = (span <= 6 * 3600e3 ? 1 : span <= 14 * 3600e3 ? 2 : 3) * 3600e3, t = new Date(a); t.setMinutes(0, 0, 0);\n"
+      }
+    ]
+  },
+  "om-core-util.js": {
+    "rule": "javascript:S6324",
+    "reason": "Retain input sanitization while replacing control-character regexes, HTML stripping and transcript-prefix matching with equivalent character scans.",
+    "patches": [
+      {
+        "before": "import { ID_RE } from './om-reads.js';\n\n// LiveChatTranscript.Body is HTML: centred <p> lines are system events, and \"( 4s ) Name: text<br>\" lines are messages\n// (a line without that prefix continues the previous message). Returned as plain text only; the page never injects it.\nconst ENTITY = { amp: '&', lt: '<', gt: '>', quot: '\"', apos: \"'\", nbsp: ' ' };\nexport const plainText = (s) => s.replace(/<[^>]*>/g, '').replace(/&(#x[0-9a-f]+|#\\d+|\\w+);/gi, (m, e) => {\n  if (e[0] !== '#') return ENTITY[e.toLowerCase()] ?? m;\n  const n = e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);\n",
+        "after": "import { ID_RE } from './om-reads.js';\n\n// Replace ASCII controls with spaces; record notes may retain normalized line breaks.\nexport function controlSpaces(value, keepNewlines = false) {\n  let out = '';\n  for (const char of String(value ?? '')) {\n    const code = char.charCodeAt(0), control = code < 32 || code === 127;\n    out += control && (!keepNewlines || char !== '\\n') ? ' ' : char;\n  }\n  return out;\n}\n\n// LiveChatTranscript.Body is HTML: centred <p> lines are system events, and \"( 4s ) Name: text<br>\" lines are messages\n// (a line without that prefix continues the previous message). Returned as plain text only; the page never injects it.\nfunction stripTags(text) {\n  let out = '', start = 0;\n  while (start < text.length) {\n    const open = text.indexOf('<', start);\n    if (open < 0) break;\n    const close = text.indexOf('>', open + 1);\n    if (close < 0) break;\n    out += text.slice(start, open);\n    start = close + 1;\n  }\n  return out + text.slice(start);\n}\nfunction contentStart(text, start, end) {\n  while (start < end - 1 && text[start].trim() === '') start++;\n  return start;\n}\nfunction transcriptLine(text) {\n  if (text[0] !== '(') return null;\n  const close = text.indexOf(')'), colon = text.indexOf(':', close + 1);\n  if (close < 2 || colon <= close + 1) return null;\n  const at = contentStart(text, 1, close), who = contentStart(text, close + 1, colon);\n  let end = close, message = colon + 1;\n  while (end > at + 1 && text[end - 1].trim() === '') end--;\n  if (message < text.length && text[message].trim() === '') message++;\n  return [text, text.slice(at, end), text.slice(who, colon), text.slice(message)];\n}\nconst ENTITY = { amp: '&', lt: '<', gt: '>', quot: '\"', apos: \"'\", nbsp: ' ' };\nexport const plainText = (s) => stripTags(s).replace(/&(#x[0-9a-f]+|#\\d+|\\w+);/gi, (m, e) => {\n  if (e[0] !== '#') return ENTITY[e.toLowerCase()] ?? m;\n  const n = e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : parseInt(e.slice(1), 10);\n"
+      },
+      {
+        "before": "    for (const line of part.split(/<br\\s*\\/?>/i)) {\n      const text = plainText(line); if (!text) continue;\n      const m = text.match(/^\\(\\s*([^)]+?)\\s*\\)\\s*([^:]+?):\\s?([\\s\\S]*)$/), last = out[out.length - 1];\n      if (m) {\n        const btn = m[3].match(/^\\{ChatWindow\\w+:([\\s\\S]*)\\}$/);\n",
+        "after": "    for (const line of part.split(/<br\\s*\\/?>/i)) {\n      const text = plainText(line); if (!text) continue;\n      const m = transcriptLine(text), last = out[out.length - 1];\n      if (m) {\n        const btn = m[3].match(/^\\{ChatWindow\\w+:([\\s\\S]*)\\}$/);\n"
+      },
+      {
+        "before": "\n// User text goes into a LIKE literal: drop control characters, cap the length, and backslash-escape quote, backslash and the % _ wildcards.\nexport const likeEsc = (s) => String(s ?? '').replace(/[\\x00-\\x1f\\x7f]/g, ' ').trim().slice(0, 80).replace(/[\\\\'%_]/g, '\\\\$&');\n// A list of record Ids for an IN (…): only real Ids, once each.\nexport const idList = (xs) => [...new Set(xs.filter((x) => x && ID_RE.test(x)))].map((x) => `'${x}'`).join(', ');\n",
+        "after": "\n// User text goes into a LIKE literal: drop control characters, cap the length, and backslash-escape quote, backslash and the % _ wildcards.\nexport const likeEsc = (s) => controlSpaces(s).trim().slice(0, 80).replace(/[\\\\'%_]/g, '\\\\$&');\n// A list of record Ids for an IN (…): only real Ids, once each.\nexport const idList = (xs) => [...new Set(xs.filter((x) => x && ID_RE.test(x)))].map((x) => `'${x}'`).join(', ');\n"
+      }
+    ]
+  },
+  "console-csv.js": {
+    "rule": "javascript:S5852",
+    "reason": "Replace a reported unbounded regex with equivalent linear matching.",
+    "patches": [
+      {
+        "before": "\nexport const CSV_FORMULA = /^[\\t\\r]|^\\s*[=+\\-@]/;\nexport const CSV_NUMBER = /^[-+]?(?:\\d+\\.?\\d*|\\.\\d+)(?:e[-+]?\\d+)?$/i;\nexport function csvCell(v) {\n  let s = v == null ? '' : String(v);\n",
+        "after": "\nexport const CSV_FORMULA = /^[\\t\\r]|^\\s*[=+\\-@]/;\nexport const CSV_NUMBER = /^[-+]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:e[-+]?\\d+)?$/i;\nexport function csvCell(v) {\n  let s = v == null ? '' : String(v);\n"
+      }
+    ]
+  }
+}

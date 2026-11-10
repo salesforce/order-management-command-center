@@ -1,0 +1,3405 @@
+{
+  "sourceCommit": "9ce36e5bd630e35653a51181371923ce329301d2",
+  "previousBaseline": "ed378969deb691bbfcad3643bb8de9115fb0e5ec",
+  "files": {
+    "app/test/a11y.test.mjs": [
+      [
+        0,
+        "every <svg> is named for a screen reader, or hidden from it"
+      ],
+      [
+        0,
+        "every image has alt text (empty when it is decoration)"
+      ],
+      [
+        0,
+        "a button that shows only a symbol or an icon has an aria-label"
+      ],
+      [
+        0,
+        "every form field has a label"
+      ],
+      [
+        0,
+        "no stylesheet hides the focus ring without drawing another"
+      ],
+      [
+        0,
+        "console: what opens on a click can be reached and opened from the keyboard"
+      ],
+      [
+        0,
+        "console: a column chart is one tab stop with a summary, and the arrow keys read its columns"
+      ],
+      [
+        0,
+        "console: re-renders keep focus where it was"
+      ],
+      [
+        0,
+        "console: a chip or segmented button says whether it is selected"
+      ],
+      [
+        0,
+        "dialogs are named; the console moves focus into its drawer and Data map, and back out"
+      ],
+      [
+        0,
+        "motion stops under prefers-reduced-motion, the map's flows included"
+      ],
+      [
+        0,
+        "tokens.css keeps the selection and the focus ring under forced colours, in system colours only"
+      ],
+      [
+        0,
+        "placeholders use --muted, which reaches 4.5:1 on a field in every theme"
+      ],
+      [
+        0,
+        "no tone colour is used as plain text on a tinted fill"
+      ],
+      [
+        0,
+        "nothing with text to read is faded with opacity"
+      ]
+    ],
+    "app/test/agent-context.test.mjs": [
+      [
+        0,
+        "the block and the panel list are found"
+      ],
+      [
+        0,
+        "a new panel is private by default"
+      ],
+      [
+        0,
+        "a flagged panel is shared in the same format as before"
+      ],
+      [
+        0,
+        "the flag must be exactly AGENT"
+      ],
+      [
+        0,
+        "the flag is per render, not sticky"
+      ],
+      [
+        0,
+        "a re-render without data drops the old rows"
+      ],
+      [
+        0,
+        "asking about a private panel sends no rows"
+      ],
+      [
+        0,
+        "csvStore keeps the raw rows of a private panel, for the CSV download"
+      ],
+      [
+        0,
+        "the reviewed list of panels shared with the agent"
+      ],
+      [
+        0,
+        "end to end: only the flagged calls reach the agent"
+      ],
+      [
+        0,
+        "flagged panels name no personal source"
+      ],
+      [
+        0,
+        "dashboardContext builds its facts from the allowlist"
+      ],
+      [
+        0,
+        "the default is private"
+      ],
+      [
+        0,
+        "a fulfillment order’s drawer tells Agentforce why it went where it did, and nothing about where it’s going"
+      ]
+    ],
+    "app/test/agent-info.test.mjs": [
+      [
+        0,
+        "agentInfo looks the agent up by developer name"
+      ],
+      [
+        0,
+        "agentInfo is null when the agent is missing"
+      ],
+      [
+        0,
+        "agentInfo is null when BotDefinition is not in the org, without querying"
+      ],
+      [
+        0,
+        "a found agent is kept, so later calls do not query again"
+      ]
+    ],
+    "app/test/agent-panel.test.mjs": [
+      [
+        0,
+        "context line for each view"
+      ],
+      [
+        0,
+        "keys outside the view allowlist and PII values are dropped"
+      ],
+      [
+        0,
+        "; ] [ = and newlines cannot break out of the context line"
+      ],
+      [
+        0,
+        "context label is readable"
+      ],
+      [
+        0,
+        "facts go in a second block, cleaned and without anything personal"
+      ],
+      [
+        0,
+        "the regex backstop is not a name filter"
+      ],
+      [
+        0,
+        "a label is shown instead of Ids and is never sent"
+      ],
+      [
+        0,
+        "the row shows who the context is, then what is on screen, then its details"
+      ],
+      [
+        0,
+        "the name in the row is never sent"
+      ],
+      [
+        0,
+        "prompts exist for every view"
+      ],
+      [
+        0,
+        "renderText escapes HTML and links, and renders the Markdown subset"
+      ],
+      [
+        0,
+        "a record the agent links to by name opens on the page, and nothing else becomes a link"
+      ],
+      [
+        0,
+        "the agent names records, links them, and knows where webstore and sales channel live"
+      ],
+      [
+        0,
+        "action labels drop the output prefix and the topic"
+      ],
+      [
+        0,
+        "the auto-brief fires once per customer"
+      ],
+      [
+        0,
+        "the auto-brief is about what the page says it is, and the customer when it says nothing"
+      ],
+      [
+        0,
+        "concurrent sends in a new view share one session"
+      ],
+      [
+        0,
+        "a question asked while another is out waits for its answer, in the order asked"
+      ],
+      [
+        0,
+        "a question that fails does not hold up the next"
+      ],
+      [
+        0,
+        "New chat drops a question still waiting for its turn"
+      ],
+      [
+        0,
+        "a question waiting on a session that expires goes to the new one, after the resend"
+      ],
+      [
+        0,
+        "a failed start is not cached"
+      ],
+      [
+        0,
+        "the idle timeout ends the session"
+      ],
+      [
+        0,
+        "the idle timer does not run while a question is out"
+      ],
+      [
+        0,
+        "end() ends the session and the next send starts a new one"
+      ],
+      [
+        0,
+        "an expired session restarts and resends once; a second expiry fails"
+      ],
+      [
+        0,
+        "in a frame taller than the screen, Agentforce sits at the bottom of what is on screen"
+      ],
+      [
+        0,
+        "Service facts fill a character budget, the console’s keep their count"
+      ]
+    ],
+    "app/test/agent-query.test.mjs": [
+      [
+        0,
+        "every action the agent has reads, and its own two run SomAgentQuery and SomAgentDescribe"
+      ],
+      [
+        0,
+        "each Apex action’s schema names exactly the class’s invocable variables"
+      ],
+      [
+        0,
+        "Run Query and Describe Object only read, in user mode, and the permission set grants just them"
+      ],
+      [
+        0,
+        "Run Query opens Order Management’s objects only, and the instructions name only those"
+      ]
+    ],
+    "app/test/apex-sync.test.mjs": [
+      [
+        0,
+        "the duplicate check reads the fields a new customer is written with"
+      ],
+      [
+        0,
+        "in-org batches stay inside what SomConsoleRead takes"
+      ]
+    ],
+    "app/test/artifact-live.test.mjs": [
+      [
+        0,
+        "each GET createCore asks for becomes one dispatch_readonly call; nothing else reaches the connector"
+      ],
+      [
+        0,
+        "answers are read as { status_code, body, url }, and errors keep their HTTP status"
+      ],
+      [
+        0,
+        "the org address comes from the answers, and a blocked org is refused like on every other path"
+      ],
+      [
+        0,
+        "the probe is the Organization query; any HTTP answer means connected, a failed call or an expired sign-in does not"
+      ],
+      [
+        0,
+        "the briefing read runs through the connector exactly as it does through REST, one GET at a time"
+      ],
+      [
+        0,
+        "an expired sign-in: the probe catches it first, and the read alone reports errors, not missing objects"
+      ],
+      [
+        0,
+        "the connector block: the placeholder means not set up; a configured one names the full dispatch_readonly tool"
+      ],
+      [
+        0,
+        "calls are paced under Cowork's 30 a minute, and a rate-limited one is retried after 2, 4 and 8 seconds"
+      ],
+      [
+        0,
+        "the live page builds into one self-contained page with the connector block left to configure"
+      ],
+      [
+        0,
+        "--local swaps only the call module: the same page reads through tools/serve-live.mjs"
+      ],
+      [
+        0,
+        "the page script gets its connector call from artifact-call.js, which each build defines once"
+      ],
+      [
+        0,
+        "in Cowork, a configured page reaches Live through window.cowork.callMcpTool, by the full tool name"
+      ],
+      [
+        0,
+        "outside Cowork, or published without a connector, the page says so instead of failing"
+      ],
+      [
+        0,
+        "configure.py writes the one tool name in, and refuses a bad name or a configured page"
+      ],
+      [
+        0,
+        "the skill folder holds both pages, SKILL.md and configure.py, and never allows dispatch"
+      ],
+      [
+        0,
+        "the relay answers only the reads the page makes, each as a GET under the org's own API version"
+      ],
+      [
+        0,
+        "the local copy reaches Live through the relay, which answers in the connector's shape"
+      ],
+      [
+        0,
+        "the local copy says how to sign in with the sf CLI when the relay has no sign-in"
+      ],
+      [
+        0,
+        "the console builds with its in-org mode on and om-cowork.js in om-platform.js's place; nothing else changes"
+      ],
+      [
+        0,
+        "the built console reads through the connector: the same answers as REST, with describes and aggregates batched"
+      ]
+    ],
+    "app/test/artifact.test.mjs": [
+      [
+        0,
+        "modules become __omcDef scripts: imports go through the loader, exports are returned"
+      ],
+      [
+        0,
+        "import and export forms the loader does not support stop the build, naming the module"
+      ],
+      [
+        0,
+        "export { … } lists names the module declares or imports, as om-core does with two of om-reads"
+      ],
+      [
+        0,
+        "bundled modules run once and import each other through the loader"
+      ],
+      [
+        0,
+        "the edit view is one self-contained page: sample data, every script, module and image inlined, the picker added"
+      ],
+      [
+        0,
+        "the design tokens page is one file too: tokens.css inlined, nothing local left, and it calls nothing"
+      ],
+      [
+        0,
+        "a CRLF checkout (git on Windows) builds the same"
+      ],
+      [
+        0,
+        "an export that would be lost, or an import of a name that is not exported, stops the build"
+      ],
+      [
+        0,
+        "local assets the build cannot inline stop it, instead of breaking under the artifact CSP"
+      ],
+      [
+        0,
+        "public/ is not changed by the build"
+      ],
+      [
+        0,
+        "a console change the build does not expect stops it, naming what is missing"
+      ],
+      [
+        0,
+        "the command line writes the file and says where; a failure exits 1 with the reason"
+      ],
+      [
+        0,
+        "picks become a prompt to paste back, one numbered line per pick with its exact anchor"
+      ],
+      [
+        0,
+        "paths run from the panel down, with nth-of-type only where siblings share a tag, and at most 4 steps"
+      ],
+      [
+        0,
+        "labels prefer aria-label and title, collapse whitespace, and stop at 60 characters"
+      ]
+    ],
+    "app/test/browser-coverage.test.mjs": [
+      [
+        0,
+        "browser module URLs map to repository files despite ports, queries and test wrappers"
+      ],
+      [
+        0,
+        "inline JavaScript maps back to its original HTML lines"
+      ],
+      [
+        0,
+        "external, injected, absent and non-JavaScript resources cannot add application coverage"
+      ],
+      [
+        0,
+        "mapping retains actual statement, function and branch counters, including uncovered code"
+      ],
+      [
+        0,
+        "parallel sessions retain separate execution reports without overwriting each other"
+      ],
+      [
+        0,
+        "an empty browser run fails rather than writing a misleading LCOV report"
+      ]
+    ],
+    "app/test/browser-session.test.mjs": [
+      [
+        0,
+        "browser session preserves the setup error when coverage cleanup also fails"
+      ],
+      [
+        0,
+        "browser session preserves the navigation error when coverage cleanup also fails"
+      ],
+      [
+        0,
+        "normal session close still fails when coverage cannot be collected"
+      ],
+      [
+        0,
+        "a launch failure stays the reported error before coverage starts"
+      ]
+    ],
+    "app/test/bundles-console.test.mjs": [
+      [
+        0,
+        "the drawer lists a bundle’s parts under it, and other items as they are"
+      ],
+      [
+        0,
+        "without bundle links the drawer lists the items as before"
+      ]
+    ],
+    "app/test/bundles-core.test.mjs": [
+      [
+        0,
+        "no bundle fields: nothing changes"
+      ]
+    ],
+    "app/test/bundles.test.mjs": [
+      [
+        0,
+        "groups a kit with its parts, main line first"
+      ],
+      [
+        0,
+        "per comes from ordered quantities"
+      ],
+      [
+        0,
+        "counts whole bundles"
+      ],
+      [
+        0,
+        "expands k bundles; a Constant part goes with the last"
+      ],
+      [
+        0,
+        "a non-whole per breaks the bundle"
+      ],
+      [
+        0,
+        "nested parts scale from the top-level main"
+      ],
+      [
+        0,
+        "spreads an amount by stored amounts, cents on the largest"
+      ],
+      [
+        0,
+        "the latest delivery is the bundle’s"
+      ],
+      [
+        0,
+        "4,000 lines group in under 1 s"
+      ],
+      [
+        0,
+        "a line whose main isn’t on the order stays a line"
+      ],
+      [
+        0,
+        "a part with no relationship row is Proportional and included"
+      ],
+      [
+        0,
+        "the gate passes a whole bundle and refuses a split one"
+      ],
+      [
+        0,
+        "Fulfil and Move send a bundle to one location; free lines may each go their own way"
+      ],
+      [
+        0,
+        "a Constant part may go with the bundle, never more than it has"
+      ],
+      [
+        0,
+        "fulfillment and return lines are checked by the order’s own records, never the body’s"
+      ],
+      [
+        0,
+        "a discount or a credit on a bundle covers every priced line"
+      ],
+      [
+        0,
+        "an edit changes a bundle’s quantity whole; a price alone is fine"
+      ],
+      [
+        0,
+        "a fulfillment order’s lines group into whole bundles; a split one is told"
+      ],
+      [
+        0,
+        "the gate takes the page’s own amount spread, however many priced lines"
+      ],
+      [
+        0,
+        "an edit adds no discount or tax to part of a bundle"
+      ]
+    ],
+    "app/test/ci-npm-config.test.mjs": [
+      [
+        0,
+        "the CI coverage install loads npm-setup configuration despite its separate prefix"
+      ]
+    ],
+    "app/test/ci-test-files.test.mjs": [
+      [
+        0,
+        "every test file under app/test is in exactly one list"
+      ],
+      [
+        0,
+        "a test that imports the browser kit is a UI test, wherever it sits"
+      ],
+      [
+        0,
+        "tests in a new folder are found without changing the pipeline"
+      ]
+    ],
+    "app/test/console-charts.test.mjs": [
+      [
+        0,
+        "hbars: a row per item, widths against the largest, shares of the total, the colour given"
+      ],
+      [
+        0,
+        "hbars: no rows says so; a row with a tip takes focus; the label is escaped"
+      ],
+      [
+        0,
+        "dur: minutes under an hour, hours under two days, days after"
+      ],
+      [
+        0,
+        "pct1 and ratio: empty and zero cases"
+      ],
+      [
+        0,
+        "mdelta: a rise is up, a fall is down, within half a percent is flat, nothing before is new"
+      ],
+      [
+        0,
+        "stats and na: labelled values, the optional small line, and the missing-object note"
+      ],
+      [
+        0,
+        "niceMax rounds a maximum up to 1, 2, 5 or 10 of its size, and at least 4"
+      ],
+      [
+        0,
+        "buckets: the period is filled with zero days, hours or months"
+      ],
+      [
+        0,
+        "columns: a labelled chart, a bar for each non-zero column, and a tab stop"
+      ]
+    ],
+    "app/test/console-demo-range.test.mjs": [
+      [
+        0,
+        "the 90-day sample data is the one the page was written for"
+      ],
+      [
+        0,
+        "orders and money grow with the range"
+      ],
+      [
+        0,
+        "what is open now does not depend on the range"
+      ],
+      [
+        0,
+        "every part adds up to the figure it belongs to, in every range"
+      ],
+      [
+        0,
+        "an unknown range is read as 90 days"
+      ],
+      [
+        0,
+        "the lists follow the range too: exceptions, the stream and its tabs"
+      ]
+    ],
+    "app/test/console-frame.test.mjs": [
+      [
+        0,
+        "the frame opens the console at the record page's order"
+      ],
+      [
+        0,
+        "the frame shows only a Multi-Framework app address"
+      ],
+      [
+        0,
+        "the component, the trusted URL and the web tab name the same app"
+      ],
+      [
+        0,
+        "a page that carries the frame sets every property"
+      ]
+    ],
+    "app/test/console-geo.test.mjs": [
+      [
+        0,
+        "proj puts the lower 48, Alaska and Hawaii on the 975×610 map, east to the right and north up"
+      ],
+      [
+        0,
+        "toAbbr takes an abbreviation or a name in any case, and nothing else"
+      ],
+      [
+        0,
+        "rampAt picks one of four steps, and the ends stay in range"
+      ],
+      [
+        0,
+        "ringArc is an arc path that never closes the circle, and takes the long way past half"
+      ],
+      [
+        0,
+        "every layer names itself and uses a token for its colour"
+      ]
+    ],
+    "app/test/console-guard.test.mjs": [
+      [
+        0,
+        "a colour typed into a style string, attribute or script is found; tokens are not"
+      ],
+      [
+        0,
+        "the console writes no colour of its own: every colour is a token"
+      ],
+      [
+        0,
+        "a query is found in the page, but not words that happen to be SQL-like"
+      ],
+      [
+        0,
+        "the console asks for data only through its API routes: no query is written in the page or its views"
+      ],
+      [
+        0,
+        "a console file with no test is found"
+      ],
+      [
+        0,
+        "every .js the console names is one the guards scanned (no import form or folder slips past)"
+      ],
+      [
+        0,
+        "the console never mentions the write layer"
+      ],
+      [
+        0,
+        "every console file has a test, or is listed with a reason"
+      ]
+    ],
+    "app/test/console-limits-ref.test.mjs": [
+      [
+        0,
+        "the top list is the ten fullest limits, fullest first, and says so when there are none"
+      ],
+      [
+        0,
+        "a bar never passes full and a name is escaped"
+      ],
+      [
+        0,
+        "access checks: ok and empty read plainly, anything else shows the check’s note, and the read-only line follows"
+      ],
+      [
+        0,
+        "the Entitlements row explains why it is missing only when it is"
+      ],
+      [
+        0,
+        "the table narrows by search on name or group and says when nothing matches"
+      ]
+    ],
+    "app/test/contributor-guidance.test.mjs": [
+      [
+        0,
+        "CLAUDE.md opens with the console quick start, and every file it names exists"
+      ],
+      [
+        0,
+        "the files the quick start links to exist"
+      ],
+      [
+        0,
+        "AGENTS.md sends other AI tools to the same quick start"
+      ],
+      [
+        0,
+        "the pull request template asks for a test and the sample-data check"
+      ],
+      [
+        0,
+        "the walkthrough and the Edit view prompt carry the same two rules and the same command"
+      ],
+      [
+        0,
+        "the docs say GitHub Actions runs the tests"
+      ],
+      [
+        0,
+        "the README and CONTRIBUTING.md link the license, security policy and code of conduct, and the files exist"
+      ],
+      [
+        0,
+        "the README credits the map data, and build-geo.mjs names the file geo.js is built from"
+      ],
+      [
+        0,
+        "NOTICE credits the map data with its license, and the README links it"
+      ],
+      [
+        0,
+        "CI lints with the config in the repo, and the config needs no installed package"
+      ],
+      [
+        0,
+        "the README shows the Tests workflow badge linked to its runs on main, and CONTRIBUTING names the maintainers"
+      ],
+      [
+        0,
+        "browser tests run in public CI on one exact playwright-core version, the same one internal CI fetches"
+      ],
+      [
+        0,
+        "the README has a Testing section with the test command that links CONTRIBUTING, and CONTRIBUTING and CLAUDE.md say UI tests run in public CI"
+      ],
+      [
+        0,
+        "the workflow reads only the repo, pins its actions to commit SHAs, and dependabot keeps them current"
+      ]
+    ],
+    "app/test/csv-export.test.mjs": [
+      [
+        0,
+        "the CSV escaping is its own module and stands alone"
+      ],
+      [
+        0,
+        "formula starters are neutralised, then quoted"
+      ],
+      [
+        0,
+        "tab, CR and leading-space starters too"
+      ],
+      [
+        0,
+        "real numbers stay numeric"
+      ],
+      [
+        0,
+        "numeric-looking strings stay untouched, anything longer does not"
+      ],
+      [
+        0,
+        "dates, ordinary text, null and undefined"
+      ],
+      [
+        0,
+        "quotes, commas and newlines survive"
+      ],
+      [
+        0,
+        "csvText joins rows with newlines and cells with commas"
+      ],
+      [
+        0,
+        "a round trip returns the original, with an apostrophe only on formula starters"
+      ],
+      [
+        0,
+        "both real exporters use the shared helper"
+      ],
+      [
+        0,
+        "downloadCsv end to end, with stubs"
+      ],
+      [
+        0,
+        "the raw csvStore is not escaped, so the agent context keeps real values"
+      ]
+    ],
+    "app/test/dashboard-demo.test.mjs": [
+      [
+        0,
+        "Dashboard chart and category totals match their KPIs at 2026-01-01T00:01:00.000Z"
+      ],
+      [
+        0,
+        "Dashboard chart and category totals match their KPIs at 2026-10-27T12:00:00.000Z"
+      ],
+      [
+        0,
+        "Dashboard calendar and prior-period boundaries match the real read model"
+      ],
+      [
+        0,
+        "Dashboard current backlog and open product demand are independent of the period"
+      ],
+      [
+        0,
+        "an unknown Dashboard period falls back to MTD"
+      ],
+      [
+        0,
+        "Dashboard settlement links open the same sample order and history"
+      ]
+    ],
+    "app/test/dashboard-products.test.mjs": [
+      [
+        0,
+        "product queries filter to product lines in the period and group by product"
+      ],
+      [
+        0,
+        "without Product2.Family or a product lookup on FulfillmentOrderLineItem, those panels are empty, not errors"
+      ],
+      [
+        0,
+        "without FulfillmentOrderLineItem at all, open demand is empty and the rest still renders"
+      ],
+      [
+        0,
+        "without product lines on OrderItemSummary, every product panel is empty"
+      ],
+      [
+        0,
+        "cancel and return rates skip products below the volume floor"
+      ],
+      [
+        0,
+        "cancelled products with equal counts keep one order whatever the row order"
+      ],
+      [
+        0,
+        "cancelled products with equal value order the same whichever way the rows arrive"
+      ]
+    ],
+    "app/test/dashboard-settlement.test.mjs": [
+      [
+        0,
+        "unpaid invoices on shipped orders and unrefunded credit memos, with order number and status"
+      ],
+      [
+        0,
+        "without Invoice the unpaid side is empty and credit memos still show"
+      ],
+      [
+        0,
+        "a credit memo without Balance or ReferenceEntityId is skipped, not an error"
+      ],
+      [
+        0,
+        "with neither object there is nothing to show"
+      ]
+    ],
+    "app/test/deep-link.test.mjs": [
+      [
+        0,
+        "the page opens an order from ?order= and picks the tab from ?view="
+      ]
+    ],
+    "app/test/graphql-batch.test.mjs": [
+      [
+        0,
+        "fieldsOf reads the top-level fields of a translator document, aliases and quoted braces included"
+      ],
+      [
+        0,
+        "mergeDocs puts every field under its own alias and splits the answer back as each map() expects"
+      ],
+      [
+        0,
+        "objectInfos answers in the REST describe's shape, and null where it has no info (missing, or not in UI API)"
+      ],
+      [
+        0,
+        "aggregates issued together go as one GraphQL GET, at most 10 data fetchers each; the rest go as they are"
+      ],
+      [
+        0,
+        "a query whose part of the batch fails goes again on its own; the others keep their answers"
+      ],
+      [
+        0,
+        "describes issued together go as one objectInfos; one it has no info for asks REST, whose 404 says it is missing"
+      ],
+      [
+        0,
+        "when GraphQL itself is refused (say the connector won't pass /graphql), reads go one by one from then on"
+      ],
+      [
+        0,
+        "an object UI API does not know fails a whole batch; its reads go as SOQL and the rest go again once"
+      ],
+      [
+        0,
+        "an object objectInfos has no info for is kept out of batches from then on"
+      ]
+    ],
+    "app/test/graphql-rows.test.mjs": [
+      [
+        0,
+        "a row query becomes one uiapi query document"
+      ],
+      [
+        0,
+        "relationship Ids and shared prefixes nest once"
+      ],
+      [
+        0,
+        "no LIMIT asks for 2000"
+      ],
+      [
+        0,
+        "the console's row queries translate"
+      ],
+      [
+        0,
+        "what it can't express stays on Apex"
+      ],
+      [
+        0,
+        "map turns edges into REST records"
+      ],
+      [
+        0,
+        "an empty lookup is null, as REST has it"
+      ],
+      [
+        0,
+        "done follows LIMIT, then the page"
+      ],
+      [
+        0,
+        "a LIMIT above 2000 asks for 2000 and is not done while there is more"
+      ],
+      [
+        0,
+        "errors are thrown with their text"
+      ],
+      [
+        0,
+        "describeDoc asks objectInfos for fields, relationships and createable"
+      ],
+      [
+        0,
+        "split answers in the REST describe's shape"
+      ],
+      [
+        0,
+        "an object objectInfos has no info for is null"
+      ],
+      [
+        0,
+        "a short answer throws"
+      ],
+      [
+        0,
+        "translateRows reports the paths it selects, filters and sorts on"
+      ]
+    ],
+    "app/test/graphql-translate.test.mjs": [
+      [
+        0,
+        "ungrouped aggregates are one row, with no first/groupBy"
+      ],
+      [
+        0,
+        "LAST_N_MONTHS and the other N-literals are eq ranges; non-eq operators fall back"
+      ],
+      [
+        0,
+        "date literals use {literal:X}"
+      ],
+      [
+        0,
+        "ISO datetimes become {value:\"…Z\"}; ms and offsets fall back"
+      ],
+      [
+        0,
+        "group by a direct field; unaliased group fields keep their name"
+      ],
+      [
+        0,
+        "parent paths (1 to 3 hops) in select, group by and where"
+      ],
+      [
+        0,
+        "COUNT_DISTINCT, MIN, MAX, AVG share a node with the group key on the same field"
+      ],
+      [
+        0,
+        "filters: comparisons, IN / NOT IN lists, LIKE, null, booleans, AND/OR/NOT/parentheses"
+      ],
+      [
+        0,
+        "IN / NOT IN subqueries become inq / ninq join filters"
+      ],
+      [
+        0,
+        "ORDER BY an aggregate or a group field; LIMIT becomes first, capped at 2000"
+      ],
+      [
+        0,
+        "select uses the GROUP BY spelling of a field (GraphQL names are case-sensitive)"
+      ],
+      [
+        0,
+        "anything unsupported returns null, never throws"
+      ],
+      [
+        0,
+        "string literals are escaped, and control characters / injection attempts are refused"
+      ],
+      [
+        0,
+        "every translated document is a read query"
+      ],
+      [
+        0,
+        "map: flat rows keyed by alias, expr0.. for unaliased aggregates, numbers as numbers"
+      ],
+      [
+        0,
+        "map: grouped rows, nulls kept, group value from {value}"
+      ],
+      [
+        0,
+        "map: relationship fields nest unless aliased; aliased ones are flat"
+      ],
+      [
+        0,
+        "map: datetimes get the REST spelling, null aggregates stay null, numeric strings become numbers"
+      ],
+      [
+        0,
+        "map: capped flag is non-enumerable and set only when the 2000-row cap is reached"
+      ],
+      [
+        0,
+        "map: GraphQL errors throw with all messages joined; empty or odd bodies throw too"
+      ],
+      [
+        0,
+        "map: an empty edge list is an empty result, not an error"
+      ],
+      [
+        0,
+        "HAVING: the 5 om-core.js queries translate"
+      ],
+      [
+        0,
+        "HAVING: < and <= sort ascending; the helper aggregate is shared with a selected one; LIMIT caps at 2000"
+      ],
+      [
+        0,
+        "HAVING: unsupported shapes return null"
+      ],
+      [
+        0,
+        "HAVING map: filters on the aggregate, drops the helper, numeric compare"
+      ],
+      [
+        0,
+        "HAVING map: MIN(OrderedDate) >= ISO compares instants and drops null groups"
+      ],
+      [
+        0,
+        "HAVING map: capped only when a full 2000 page ends on a row that still qualifies"
+      ],
+      [
+        0,
+        "HAVING map: null aggregates filling the page are never reported as a complete (empty) result"
+      ],
+      [
+        0,
+        "ORDER BY COUNT_DISTINCT(lookup) fetches every group and sorts here; a full page is refused"
+      ],
+      [
+        0,
+        "series month: one bucket per local month, edges at local midnight on the 1st (PDT/PST)"
+      ],
+      [
+        0,
+        "series month: rows are { expr0: year, expr1: month, c }, empty buckets are dropped"
+      ],
+      [
+        0,
+        "series month: a year of months is split into documents of 5 buckets (UI API allows 10 data fetchers per document)"
+      ],
+      [
+        0,
+        "series day: DAY_ONLY rows are { expr0: \"YYYY-MM-DD\", c }; the DST change days are 23/25 hours long"
+      ],
+      [
+        0,
+        "series hour: HOUR_IN_DAY rows are { expr0: hour, c }; the same hour on several days (and a repeated DST hour) sum"
+      ],
+      [
+        0,
+        "series: a half-hour zone gets half-hour aligned local hours"
+      ],
+      [
+        0,
+        "series hour: a 30-minute DST shift inside a bucket stays on Apex; windows clear of it, and day/month buckets, still translate"
+      ],
+      [
+        0,
+        "series: extra WHERE conditions stay in every bucket, aliases and column order are kept"
+      ],
+      [
+        0,
+        "series: an open upper bound runs to the injected now"
+      ],
+      [
+        0,
+        "series stays on Apex (null) without a zone, without a lower bound, or when the shape is not understood"
+      ],
+      [
+        0,
+        "series: a wall-clock midnight that does not exist (DST gap) is refused, not guessed"
+      ],
+      [
+        0,
+        "groupBy merges relationship paths that share a prefix into one nested object"
+      ],
+      [
+        0,
+        "map() puts each aliased value from the merged selection in the right column"
+      ]
+    ],
+    "app/test/internal.test.mjs": [
+      [
+        0,
+        "git archive leaves the internal pipeline, its tools and this test out of a release"
+      ],
+      [
+        0,
+        "the repository’s om-config.js names no org: no consumer key, the generic login domain, and no blocked orgs"
+      ],
+      [
+        0,
+        "the internal om-config.js refuses GUS and nothing else"
+      ],
+      [
+        0,
+        "publish builds app/public at a commit with only om-config.js swapped for the internal one"
+      ],
+      [
+        0,
+        "internal CI fetches the same pinned playwright-core as public CI, from the version file"
+      ]
+    ],
+    "app/test/j-cache.test.mjs": [
+      [
+        0,
+        "the block is found and exports the cache"
+      ],
+      [
+        0,
+        "only the four drawer reads are cacheable"
+      ],
+      [
+        0,
+        "a repeat inside the TTL is served from memory, and expires at the TTL"
+      ],
+      [
+        0,
+        "different URLs are separate entries"
+      ],
+      [
+        0,
+        "errors are not kept, and keep their status and kind"
+      ],
+      [
+        0,
+        "empty or partial answers are not kept"
+      ],
+      [
+        0,
+        "a call with options goes straight through and is never kept"
+      ],
+      [
+        0,
+        "requests for the same URL in flight share one fetch, and a failure reaches every waiter"
+      ],
+      [
+        0,
+        "clear() empties the cache and an earlier fetch cannot put its answer back"
+      ],
+      [
+        0,
+        "at most 40 are kept; the longest unused goes first"
+      ],
+      [
+        0,
+        "an expired entry is dropped when read"
+      ],
+      [
+        0,
+        "with the real core behind it, a repeat makes no org queries until clear()"
+      ],
+      [
+        0,
+        "the page wires it around every sign-in mode, and demo never reaches it"
+      ]
+    ],
+    "app/test/labels.test.mjs": [
+      [
+        0,
+        "the labels are their own module and stand alone"
+      ],
+      [
+        0,
+        "shownKey: the payload wins over the pick, and anything unknown falls back to the pick"
+      ],
+      [
+        0,
+        "failNote names what was asked and what is still on screen"
+      ],
+      [
+        0,
+        "no label reads the pick: every one goes through the payload-based helpers"
+      ],
+      [
+        0,
+        "sample data carries the range like a real payload, and load() asks for the picked one"
+      ],
+      [
+        0,
+        "scopeQuery and scopeText: the filters picked go on the query, and the words follow the payload"
+      ],
+      [
+        0,
+        "scopeNames: a name two stores share gets the end of each Id; the rest stay as they are"
+      ],
+      [
+        0,
+        "load() asks for the Store and Sales channel picked, on the console and the Dashboard"
+      ],
+      [
+        0,
+        "console labels follow the loaded payload, not the pick"
+      ],
+      [
+        0,
+        "a failed range click keeps the pick and the old data, and the banner names both"
+      ],
+      [
+        0,
+        "overlapping loads: the late answer for an older pick is discarded"
+      ],
+      [
+        0,
+        "a superseded load that fails writes nothing"
+      ],
+      [
+        0,
+        "the dashboard labels from dash.period, the service queue from svc.range"
+      ]
+    ],
+    "app/test/leaf-modules.test.mjs": [
+      [
+        0,
+        "each leaf module imports nothing"
+      ]
+    ],
+    "app/test/license-headers.test.mjs": [
+      [
+        0,
+        "every release file that takes comments has the header"
+      ],
+      [
+        0,
+        "each format gets its own comment style"
+      ],
+      [
+        0,
+        "the header goes after a shebang, an XML declaration and a doctype, and inside an LWC template"
+      ],
+      [
+        0,
+        "a file that already has the header is left alone"
+      ]
+    ],
+    "app/test/limits-view.test.mjs": [
+      [
+        0,
+        "the arithmetic is its own module and stands alone"
+      ],
+      [
+        0,
+        "fractions and levels: 80% warns, 100% is over"
+      ],
+      [
+        0,
+        "a crossing is a level that got worse while the page was watching"
+      ],
+      [
+        0,
+        "run-rate projection: today so far plus the rate for the minutes left until local midnight"
+      ],
+      [
+        0,
+        "time to full"
+      ],
+      [
+        0,
+        "odometer digits are grouped with commas"
+      ],
+      [
+        0,
+        "the Apex rows micro-bar is amber from 60% and red from 90% of 50,000"
+      ],
+      [
+        0,
+        "rest of org is the counter growth we did not cause"
+      ],
+      [
+        0,
+        "calls per minute and the trend arrow"
+      ],
+      [
+        0,
+        "amounts: storage over a gigabyte reads in GB"
+      ],
+      [
+        0,
+        "rows: org limits, entitlements and licences with levels; the order entitlement is counted from OrderSummary"
+      ],
+      [
+        0,
+        "gauges: the five that matter, in order, skipping any the org does not report"
+      ],
+      [
+        0,
+        "a request travels from its source, through its gateway, into the org"
+      ],
+      [
+        0,
+        "chart bins: 90 bins of 10 s ending at the next 10 s mark, own and rest stacked separately"
+      ],
+      [
+        0,
+        "nice axis maximums"
+      ],
+      [
+        0,
+        "wiring: four modes, #limits and ?mode=limits open the view, V cycles through it, Live stays off until chosen"
+      ],
+      [
+        0,
+        "live behaviour: opt-in, auto-refresh Off/5m/15m/30m/1h (default 5m once on), idle views ask half as often, nothing while hidden, reduced motion honoured"
+      ],
+      [
+        0,
+        "the view reads no record data and writes no markup unescaped"
+      ],
+      [
+        0,
+        "limPaintRef declares acc before it hands it to the reference markup (console-limits-ref.js)"
+      ],
+      [
+        0,
+        "one auto-refresh picker in the top bar drives the view on screen, remembered per view"
+      ]
+    ],
+    "app/test/limits.test.mjs": [
+      [
+        0,
+        "limits route: org limits, entitlements, licences, jobs and the order count"
+      ],
+      [
+        0,
+        "limits route: the order summary entitlement shows the OrderSummary count as used; others keep their own"
+      ],
+      [
+        0,
+        "limits route: an entitlement that reports its own usage is not overwritten by the count"
+      ],
+      [
+        0,
+        "limits route: only=api is one call and returns just DailyApiRequests"
+      ],
+      [
+        0,
+        "limits route: one part failing leaves the others"
+      ],
+      [
+        0,
+        "limits route: objects the org lacks give null and are never queried"
+      ],
+      [
+        0,
+        "limits route: selects only the fields the org has, and licence queries skip unlicensed rows"
+      ],
+      [
+        0,
+        "limits route stays read-only: no POST, only /limits and queries"
+      ],
+      [
+        0,
+        "kindOf classifies paths"
+      ],
+      [
+        0,
+        "parseLimitsHeader reads used/max pairs and bare values"
+      ],
+      [
+        0,
+        "normalize never keeps query text: the path is cut at ?, only the SOQL object survives"
+      ],
+      [
+        0,
+        "record fills the snapshot: recent entries newest first, buckets, kinds, percentiles, heaviest, slowest"
+      ],
+      [
+        0,
+        "snapshot keeps only the newest 50 entries"
+      ],
+      [
+        0,
+        "the ring drops entries older than 60 minutes and caps at 2000"
+      ],
+      [
+        0,
+        "entries(since) is chronological and only newer than since"
+      ],
+      [
+        0,
+        "subscribe hears every record until unsubscribed; a throwing subscriber does not stop the rest"
+      ],
+      [
+        0,
+        "the same call recorded twice counts once"
+      ],
+      [
+        0,
+        "two meters on one channel share calls both ways, without echo or double counting"
+      ],
+      [
+        0,
+        "a message from another tab is cleaned like any entry"
+      ],
+      [
+        0,
+        "calls are kept in storage and a new page picks them up; reset clears both"
+      ],
+      [
+        0,
+        "stored data that is not JSON is ignored, and a failing store or channel never throws"
+      ],
+      [
+        0,
+        "an empty meter snapshots cleanly"
+      ],
+      [
+        0,
+        "status 0 (network failure or timeout) counts as an error"
+      ],
+      [
+        0,
+        "feature gating: stock lookup is skipped when Omnichannel Inventory is off, and sent when on or unknown"
+      ],
+      [
+        0,
+        "limits route: access says what this user can read, part by part"
+      ]
+    ],
+    "app/test/load-banner.test.mjs": [
+      [
+        0,
+        "the banner helpers are their own module and stand alone"
+      ],
+      [
+        0,
+        "the title carries the open-exceptions count only while Live is on in the console"
+      ],
+      [
+        0,
+        "only an expired sign-in (401) and a blocked-org refusal are sign-in failures, never a 409 alone"
+      ],
+      [
+        0,
+        "a banner is amber while a payload is on screen, red when the view has nothing"
+      ],
+      [
+        0,
+        "load(): a first failure is red, a later one amber, a success clears, a sign-in failure only opens the gate"
+      ],
+      [
+        0,
+        "wiring: the banner has its own element, so renderNotice cannot hide it"
+      ],
+      [
+        0,
+        "wiring: the banner text takes its labels from the payload helpers, never the pick"
+      ],
+      [
+        0,
+        "wiring: load() clears on success, sends sign-in failures to the gate alone, and keeps its polling lines"
+      ],
+      [
+        0,
+        "wiring: the gate, a view change, Live and every paint keep the title and banner in step"
+      ],
+      [
+        0,
+        "the banner CSS uses theme variables only, with ink text"
+      ],
+      [
+        0,
+        "the title count is the Open exceptions KPI the console route already returns"
+      ]
+    ],
+    "app/test/mode.test.mjs": [
+      [
+        0,
+        "the address decides the mode"
+      ],
+      [
+        0,
+        "Salesforce sends a localhost sign-in back without ?auth=browser, so one under way keeps browser mode"
+      ],
+      [
+        0,
+        "the builds force sample data (the edit view) or the inside-Salesforce path (the live console)"
+      ]
+    ],
+    "app/test/money-state.test.mjs": [
+      [
+        0,
+        "the defaults are 15 minutes for a refund on its way and a day for a charge"
+      ],
+      [
+        0,
+        "the demo org’s rows flag only the order that’s short"
+      ],
+      [
+        0,
+        "an expired hold doesn’t cover the order"
+      ],
+      [
+        0,
+        "a credit memo’s balance is a refund needed, and isn’t counted again as charged too much"
+      ],
+      [
+        0,
+        "charged more than the total with no memo is a direct refund"
+      ],
+      [
+        0,
+        "a change in the last 15 minutes is a refund on its way, not a flag"
+      ],
+      [
+        0,
+        "an invoice open more than a day while the hold covers it is not collected"
+      ],
+      [
+        0,
+        "an invoice whose money was already charged isn’t counted as not collected"
+      ],
+      [
+        0,
+        "not collected is never more than what’s still held"
+      ],
+      [
+        0,
+        "no payment summary, or an order Order Management doesn’t manage, flags nothing"
+      ],
+      [
+        0,
+        "half a cent flags nothing"
+      ],
+      [
+        0,
+        "it answers what each card has paid and has held"
+      ],
+      [
+        0,
+        "what was captured counts against an invoice’s balance, so an order already charged isn’t \"not collected\""
+      ],
+      [
+        0,
+        "what an exchange order’s return pays for: its total, up to what the exchange order was placed at, unless it’s canceled"
+      ],
+      [
+        0,
+        "an exchange order isn’t missing what its return pays for, only what it’s short beyond that"
+      ],
+      [
+        0,
+        "an even exchange has no payment of its own, and its return pays for all of it"
+      ],
+      [
+        0,
+        "what an exchange order’s return pays for is never a refund"
+      ]
+    ],
+    "app/test/om-agent.test.mjs": [
+      [
+        0,
+        "start posts the session body and returns the session id"
+      ],
+      [
+        0,
+        "send numbers messages per session and parses the reply"
+      ],
+      [
+        0,
+        "end sends DELETE with the end reason"
+      ],
+      [
+        0,
+        "end passes keepalive through for pagehide"
+      ],
+      [
+        0,
+        "anything outside the three calls is refused before fetch"
+      ],
+      [
+        0,
+        "read actions are recognised bare, prefixed and by invocation target"
+      ],
+      [
+        0,
+        "parseReply collects action names and flags anything that is not a read"
+      ],
+      [
+        0,
+        "HTTP errors map to the kinds the panel shows"
+      ],
+      [
+        0,
+        "network errors and timeouts are retryable"
+      ],
+      [
+        0,
+        "a 401 refreshes once with the used token, then retries"
+      ],
+      [
+        0,
+        "a start reply without a session id is treated as unavailable"
+      ]
+    ],
+    "app/test/om-command-center/dashboard/dashboard-kit.mjs": [
+      [
+        0,
+        "Dashboard orders: chart tooltips and keyboard read every bucket including zero gaps"
+      ],
+      [
+        0,
+        "Dashboard orders: Data map lists unique sources safely and returns focus"
+      ],
+      [
+        0,
+        "Dashboard orders: Ask names the selected public or private panel without sending"
+      ],
+      [
+        0,
+        "Dashboard products: Refresh restores data and Live controls keep selected tab and period"
+      ],
+      [
+        0,
+        "Dashboard orders: Store and Sales channel pickers narrow the tiles and the channel mix"
+      ],
+      [
+        0,
+        "Dashboard customers: Customer base"
+      ],
+      [
+        0,
+        "Dashboard customers: Top accounts by spend"
+      ],
+      [
+        0,
+        "Dashboard customers: Most frequent shoppers"
+      ],
+      [
+        0,
+        "Dashboard customers: Top returners"
+      ],
+      [
+        0,
+        "Dashboard customers: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Fulfillment speed"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Open fulfillment backlog"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Location scorecard"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Fulfillment"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Location groups"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: Carrier performance"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard orders: Orders KPI"
+      ],
+      [
+        0,
+        "Dashboard orders: Order value KPI"
+      ],
+      [
+        0,
+        "Dashboard orders: Avg order value KPI"
+      ],
+      [
+        0,
+        "Dashboard orders: Returns KPI"
+      ],
+      [
+        0,
+        "Dashboard orders: Refunds issued KPI"
+      ],
+      [
+        0,
+        "Dashboard orders: Process exceptions KPI"
+      ],
+      [
+        0,
+        "Dashboard returns: every period updates cards dates grain and export"
+      ],
+      [
+        0,
+        "Dashboard orders: zero new flat missing and all-time comparisons"
+      ],
+      [
+        0,
+        "Dashboard orders: failed period keeps last good data and Retry recovers"
+      ],
+      [
+        0,
+        "Dashboard orders: Orders per day"
+      ],
+      [
+        0,
+        "Dashboard orders: Sales channel mix"
+      ],
+      [
+        0,
+        "Dashboard orders: Average basket"
+      ],
+      [
+        0,
+        "Dashboard orders: Cancellations"
+      ],
+      [
+        0,
+        "Dashboard orders: Order changes"
+      ],
+      [
+        0,
+        "Dashboard orders: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard orders: view controls routes and all eight keyboard shortcuts"
+      ],
+      [
+        0,
+        "Dashboard customers: account rankings open matching drawers by mouse Enter and Space"
+      ],
+      [
+        0,
+        "Dashboard payments: outstanding orders open and close matching order drawers"
+      ],
+      [
+        0,
+        "Dashboard products: top product opens its own inventory with the mouse"
+      ],
+      [
+        0,
+        "Dashboard customers: whole page workflow reaches product inventory and returns to Dashboard"
+      ],
+      [
+        0,
+        "Dashboard orders: 1440px layout scrolls every domain without page overflow"
+      ],
+      [
+        0,
+        "Dashboard orders: 1024px layout scrolls every domain without page overflow"
+      ],
+      [
+        0,
+        "Dashboard payments: Money flow"
+      ],
+      [
+        0,
+        "Dashboard payments: Shipped, not paid"
+      ],
+      [
+        0,
+        "Dashboard payments: Refund owed, not created"
+      ],
+      [
+        0,
+        "Dashboard payments: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard policies: Return policies"
+      ],
+      [
+        0,
+        "Dashboard policies: Cancel policies"
+      ],
+      [
+        0,
+        "Dashboard policies: Adjustment policies"
+      ],
+      [
+        0,
+        "Dashboard policies: Store assignments"
+      ],
+      [
+        0,
+        "Dashboard policies: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard products: Product performance"
+      ],
+      [
+        0,
+        "Dashboard products: Top products"
+      ],
+      [
+        0,
+        "Dashboard products: Top products by revenue"
+      ],
+      [
+        0,
+        "Dashboard products: Highest cancel rate"
+      ],
+      [
+        0,
+        "Dashboard products: Highest return rate"
+      ],
+      [
+        0,
+        "Dashboard products: Product family mix"
+      ],
+      [
+        0,
+        "Dashboard products: Open fulfillment demand"
+      ],
+      [
+        0,
+        "Dashboard products: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard returns: Returns per day"
+      ],
+      [
+        0,
+        "Dashboard returns: Return drivers"
+      ],
+      [
+        0,
+        "Dashboard returns: Most-returned products"
+      ],
+      [
+        0,
+        "Dashboard returns: Days to return"
+      ],
+      [
+        0,
+        "Dashboard returns: Return rate"
+      ],
+      [
+        0,
+        "Dashboard returns: Return outcome"
+      ],
+      [
+        0,
+        "Dashboard returns: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard service: Exceptions by category"
+      ],
+      [
+        0,
+        "Dashboard service: Exception age & resolution"
+      ],
+      [
+        0,
+        "Dashboard service: Customer service"
+      ],
+      [
+        0,
+        "Dashboard service: all components follow the period"
+      ],
+      [
+        0,
+        "Dashboard orders: empty bars zero denominators blank reasons and missing change object"
+      ],
+      [
+        0,
+        "Dashboard customers: no customers unavailable returns and capped account counts"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: empty locations unmeasurable carriers and missing objects"
+      ],
+      [
+        0,
+        "Dashboard payments: failed canceled declined and voided amounts never enter stages"
+      ],
+      [
+        0,
+        "Dashboard payments: no outstanding balances zero rates and missing payment objects"
+      ],
+      [
+        0,
+        "Dashboard service: no exceptions unresolved timing and unavailable Case"
+      ],
+      [
+        0,
+        "Dashboard returns: zero denominators blank channels outcomes and unavailable days"
+      ],
+      [
+        0,
+        "Dashboard products: no product lines open demand missing amounts and missing rate fields"
+      ],
+      [
+        0,
+        "Dashboard policies: permission missing empty and ambiguous defaults remain explicit"
+      ],
+      [
+        0,
+        "Dashboard orders: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard customers: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard fulfillment: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard payments: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard service: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard returns: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard products: partial query failure stays local and capped reads are labeled"
+      ],
+      [
+        0,
+        "Dashboard orders: standard tokens and accessibility on every domain"
+      ],
+      [
+        0,
+        "Dashboard orders: slds-light tokens and accessibility on every domain"
+      ],
+      [
+        0,
+        "Dashboard orders: slds-dark tokens and accessibility on every domain"
+      ]
+    ],
+    "app/test/om-command-center/limits/limits-kit.mjs": [
+      [
+        0,
+        "Limits: all chart windows show the correct buckets axes and stacked heights"
+      ],
+      [
+        0,
+        "Limits: daily strip and API gauge show midnight projection and time to full"
+      ],
+      [
+        0,
+        "Limits: quiet chart has no bars and no invented usage projection"
+      ],
+      [
+        0,
+        "Limits: request flow maps all sources and gateways with proportional active routes"
+      ],
+      [
+        0,
+        "Limits: empty meter keeps flow routes quiet"
+      ],
+      [
+        0,
+        "Limits: meter arrivals update the flow while passive"
+      ],
+      [
+        0,
+        "Limits: DailyApiRequests gauge"
+      ],
+      [
+        0,
+        "Limits: DataStorageMB gauge"
+      ],
+      [
+        0,
+        "Limits: FileStorageMB gauge"
+      ],
+      [
+        0,
+        "Limits: ent:Lightning Order Management Order Summary Entitlements gauge"
+      ],
+      [
+        0,
+        "Limits: DailyAsyncApexExecutions gauge"
+      ],
+      [
+        0,
+        "Limits: gauges transition from normal to warning full and over without hiding real percentages"
+      ],
+      [
+        0,
+        "Limits: gauges omit missing zero-capacity and unknown-usage readings"
+      ],
+      [
+        0,
+        "Limits: API odometer shows the counter allowance and accessible value"
+      ],
+      [
+        0,
+        "Limits: rates distinguish this console the rest of the org and passive cost"
+      ],
+      [
+        0,
+        "Limits: alerts show every over-limit and warning in severity order"
+      ],
+      [
+        0,
+        "Limits: alert crossings overflow and recovery stay accurate"
+      ],
+      [
+        0,
+        "Limits: ledger shows ordered requests pinned extremes failures and cap bars"
+      ],
+      [
+        0,
+        "Limits: session cards show counts latency errors peak rows and GraphQL Apex shares"
+      ],
+      [
+        0,
+        "Limits: new failed call updates ledger and session and large ledgers cap at thirty recent calls"
+      ],
+      [
+        0,
+        "Limits: empty meter has useful ledger and zero session states"
+      ],
+      [
+        0,
+        "Limits: hash opens Limits with the right controls"
+      ],
+      [
+        0,
+        "Limits: query parameter opens Limits with the right controls"
+      ],
+      [
+        0,
+        "Limits: auto-refresh options update cost persist the interval and keep Live opt-in"
+      ],
+      [
+        0,
+        "Limits: Live polling pauses while hidden resumes and stops after leaving Limits"
+      ],
+      [
+        0,
+        "Limits: Refresh keeps last good readings on failure and Retry recovers"
+      ],
+      [
+        0,
+        "Limits: page walkthrough supports keyboard reference search and Dashboard return"
+      ],
+      [
+        0,
+        "Limits: unavailable request meter leaves org readings and reference usable"
+      ],
+      [
+        0,
+        "Limits: Live request particles travel and finish when motion is enabled"
+      ],
+      [
+        0,
+        "Limits: 1440px layout fits and scrolls to the reference"
+      ],
+      [
+        0,
+        "Limits: 1024px layout fits and scrolls to the reference"
+      ],
+      [
+        0,
+        "Limits: closest-to-limit ranking keeps all ten labels values groups and bar proportions"
+      ],
+      [
+        0,
+        "Limits: access checks and async jobs show all readable categories"
+      ],
+      [
+        0,
+        "Limits: reference table formats every row and search matches names and types"
+      ],
+      [
+        0,
+        "Limits: CSV exports every limit even when search hides most rows"
+      ],
+      [
+        0,
+        "Limits: CSV safely preserves quoted names unknown usage and formula-like values"
+      ],
+      [
+        0,
+        "Limits: blocked empty and unknown readings stay explicit while other reference rows work"
+      ],
+      [
+        0,
+        "Limits: standard theme tokens and whole-view accessibility"
+      ],
+      [
+        0,
+        "Limits: slds-light theme tokens and whole-view accessibility"
+      ],
+      [
+        0,
+        "Limits: slds-dark theme tokens and whole-view accessibility"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/activity-stream.test.mjs": [
+      [
+        0,
+        "Activity stream: every tab has its own columns and rows from the sample data"
+      ],
+      [
+        0,
+        "Activity stream: rows open their record with the mouse and the keyboard"
+      ],
+      [
+        0,
+        "Activity stream: the chosen tab stays through a range change"
+      ],
+      [
+        0,
+        "Activity stream: every tab scrolls to its last row, with the headings pinned"
+      ],
+      [
+        0,
+        "Activity stream: no accessibility findings on any tab"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/exception-queue.test.mjs": [
+      [
+        0,
+        "Exception queue: labels of the heading, tabs and rows, on every tab"
+      ],
+      [
+        0,
+        "Exception queue: every tab scrolls to its last row, with the tabs staying put"
+      ],
+      [
+        0,
+        "Exception queue: the side panel opens from a row and closes again on every tab"
+      ],
+      [
+        0,
+        "Exception queue: no accessibility findings on any tab"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/filters.test.mjs": [
+      [
+        0,
+        "Console: Store and Sales channel pickers narrow the panels"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/kpis-range.test.mjs": [
+      [
+        0,
+        "Console panels update with every range button"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/map-view.test.mjs": [
+      [
+        0,
+        "Map: network and layer legends match the sample data"
+      ],
+      [
+        0,
+        "Map: tooltips and location focus work with mouse and keyboard"
+      ],
+      [
+        0,
+        "Map: Flows removes and restores routes without changing the data"
+      ],
+      [
+        0,
+        "Map: zoom, pan and reset change the view without selecting a location"
+      ],
+      [
+        0,
+        "Map: full screen preserves the layer and restores the layout"
+      ],
+      [
+        0,
+        "Map: Inventory searches a SKU, shows its quantities, and clears it"
+      ],
+      [
+        0,
+        "Map: every layer passes the accessibility audit"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/status-board.test.mjs": [
+      [
+        0,
+        "Status board: bars drawn in proportion, keyed by name and count, read-only, on every range"
+      ],
+      [
+        0,
+        "Status board: each status is drawn in its own colour, in the bar and in the key"
+      ],
+      [
+        0,
+        "Status board: no accessibility findings"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/theme.test.mjs": [
+      [
+        0,
+        "Console theme button changes every component"
+      ]
+    ],
+    "app/test/om-command-center/operation-console/walkthrough.test.mjs": [
+      [
+        0,
+        "Operations Console walkthrough in demo mode"
+      ]
+    ],
+    "app/test/om-command-center/service-console/service-kit.mjs": [
+      [
+        0,
+        "Service Console: conversation metadata entries speakers options and linked records"
+      ],
+      [
+        0,
+        "Service Console: expanded conversation survives queue refresh and collapses accessibly"
+      ],
+      [
+        0,
+        "Service Console: conversation loading failure retry and unavailable text"
+      ],
+      [
+        0,
+        "Service Console: collapsed or previous-customer conversation replies stay hidden"
+      ],
+      [
+        0,
+        "Service Console: customer header and all summary badges match its payload"
+      ],
+      [
+        0,
+        "Service Console: attention groups contain the right cases exceptions and order links"
+      ],
+      [
+        0,
+        "Service Console: most-open customers rank correctly and Clear returns to the queue overview"
+      ],
+      [
+        0,
+        "Service Console: newest customer wins after a delayed success or failure and Clear cancels loading"
+      ],
+      [
+        0,
+        "Service Console: every order card shows matching number status total destination and items"
+      ],
+      [
+        0,
+        "Service Console: item cancellation return fulfillment and six-line cap stay distinct"
+      ],
+      [
+        0,
+        "Service Console: fulfillment stages stuck badges quantities and shipment dates match records"
+      ],
+      [
+        0,
+        "Service Console: unreleased canceled and missing fulfillment orders explain their state"
+      ],
+      [
+        0,
+        "Service Console: returns refunds closed cases and tracking links use matching records"
+      ],
+      [
+        0,
+        "Service Console: Service Console is the third view with queue-specific controls"
+      ],
+      [
+        0,
+        "Service Console: customer deep link reload and malformed links resolve safely"
+      ],
+      [
+        0,
+        "Service Console: queue search record drawer Clear and tab return form one workflow"
+      ],
+      [
+        0,
+        "Service Console: 1440px queue and customer fit and scroll independently"
+      ],
+      [
+        0,
+        "Service Console: 1024px queue and customer fit and scroll independently"
+      ],
+      [
+        0,
+        "Service Console: queue rows match priority order ownership and grouped exception counts"
+      ],
+      [
+        0,
+        "Service Console: kind owner and category filters combine and retain keyboard focus"
+      ],
+      [
+        0,
+        "Service Console: queue arrows j k Enter and Space select open and clamp at both ends"
+      ],
+      [
+        0,
+        "Service Console: records without customers fall back to order or case drawers"
+      ],
+      [
+        0,
+        "Service Console: all seven ranges refresh the queue and retain the selected customer"
+      ],
+      [
+        0,
+        "Service Console: queue scrolling and filtering keep the selected option valid"
+      ],
+      [
+        0,
+        "Service Console: customer search by name shows matching payload and opens the result"
+      ],
+      [
+        0,
+        "Service Console: customer search by email shows matching payload and opens the result"
+      ],
+      [
+        0,
+        "Service Console: customer search by phone shows matching payload and opens the result"
+      ],
+      [
+        0,
+        "Service Console: customer search by order number shows matching payload and opens the result"
+      ],
+      [
+        0,
+        "Service Console: search minimum length blank and no matches"
+      ],
+      [
+        0,
+        "Service Console: search arrows wrap and Enter chooses the highlighted result"
+      ],
+      [
+        0,
+        "Service Console: Enter searches before debounce and Escape then blur dismiss results"
+      ],
+      [
+        0,
+        "Service Console: late search success and failure cannot replace the newer query"
+      ],
+      [
+        0,
+        "Service Console: empty filtered and truncated queues have distinct messages"
+      ],
+      [
+        0,
+        "Service Console: missing objects invalid categories and partial errors preserve readable rows"
+      ],
+      [
+        0,
+        "Service Console: failed range retains the previous queue and Retry applies the new range"
+      ],
+      [
+        0,
+        "Service Console: customer not found and read failure recover through Back"
+      ],
+      [
+        0,
+        "Service Console: empty customer sections and unavailable objects remain explicit"
+      ],
+      [
+        0,
+        "Service Console: search failure renders safely and the next query recovers"
+      ],
+      [
+        0,
+        "Service Console: an expired customer session returns to sign-in"
+      ],
+      [
+        0,
+        "Service Console: standard theme tokens and component accessibility"
+      ],
+      [
+        0,
+        "Service Console: slds-light theme tokens and component accessibility"
+      ],
+      [
+        0,
+        "Service Console: slds-dark theme tokens and component accessibility"
+      ]
+    ],
+    "app/test/om-command-center/side-panel/side-panel-kit.mjs": [
+      [
+        0,
+        "Side panel: customer metrics rankings loyalty and recent records"
+      ],
+      [
+        0,
+        "Side panel: customer badges distinguish heavy returner lapsed and no-return shoppers"
+      ],
+      [
+        0,
+        "Side panel: customer unavailable data empty lists and nonmembers"
+      ],
+      [
+        0,
+        "Side panel: order facts and every line item match the payload"
+      ],
+      [
+        0,
+        "Side panel: order progress distinguishes approved partial fulfilled and canceled"
+      ],
+      [
+        0,
+        "Side panel: empty order sections and absent optional fields show useful fallbacks"
+      ],
+      [
+        0,
+        "Side panel: Activity dates statuses amounts and products match every event"
+      ],
+      [
+        0,
+        "Side panel: Activity product filtering and All products restore exact events"
+      ],
+      [
+        0,
+        "Side panel: Timeline lanes selection related records and clear selection"
+      ],
+      [
+        0,
+        "Side panel: Timeline product and day zoom restore Whole order"
+      ],
+      [
+        0,
+        "Side panel: history drill and Back retain tab product and selected record"
+      ],
+      [
+        0,
+        "Side panel: open close controls reset content view and navigation"
+      ],
+      [
+        0,
+        "Side panel: keyboard opens records traps focus and restores a redrawn trigger"
+      ],
+      [
+        0,
+        "Side panel: redrawing the focused control keeps focus in the open drawer or data map"
+      ],
+      [
+        0,
+        "Side panel: drill and close preserve Dashboard period domain and scroll"
+      ],
+      [
+        0,
+        "Side panel: 1440px drawer and timeline fit and scroll"
+      ],
+      [
+        0,
+        "Side panel: 390px drawer and timeline fit and scroll"
+      ],
+      [
+        0,
+        "Side panel: standard drawer themes and accessibility"
+      ],
+      [
+        0,
+        "Side panel: slds-light drawer themes and accessibility"
+      ],
+      [
+        0,
+        "Side panel: slds-dark drawer themes and accessibility"
+      ],
+      [
+        0,
+        "Side panel: Fulfillment Order fields and related rows"
+      ],
+      [
+        0,
+        "Side panel: Shipment fields and related rows"
+      ],
+      [
+        0,
+        "Side panel: Return Order fields and related rows"
+      ],
+      [
+        0,
+        "Side panel: Case fields and related rows"
+      ],
+      [
+        0,
+        "Side panel: Process Exception fields and related rows"
+      ],
+      [
+        0,
+        "Side panel: fulfillment routing values and focus on map"
+      ],
+      [
+        0,
+        "Side panel: linked records and Back preserve the drill trail"
+      ],
+      [
+        0,
+        "Side panel: Salesforce and tracking links have correct safe targets"
+      ],
+      [
+        0,
+        "Side panel: loading can be closed and the delayed reply does not reopen the drawer"
+      ],
+      [
+        0,
+        "Side panel: order customer and record failures stay contained and recover"
+      ],
+      [
+        0,
+        "Side panel: a previous history failure cannot overwrite the same order reopened on Activity"
+      ],
+      [
+        0,
+        "Side panel: history error keeps Details usable and a later attempt recovers"
+      ],
+      [
+        0,
+        "Side panel: empty history is explained in both views"
+      ],
+      [
+        0,
+        "Side panel: late history failure cannot replace Details after switching tabs"
+      ],
+      [
+        0,
+        "Side panel: empty related lists and record text are rendered safely"
+      ],
+      [
+        0,
+        "Side panel: late order response cannot replace the newer record"
+      ],
+      [
+        0,
+        "Side panel: late account response cannot replace the newer record"
+      ],
+      [
+        0,
+        "Side panel: late FulfillmentOrder response cannot replace the newer record"
+      ]
+    ],
+    "app/test/om-http.test.mjs": [
+      [
+        0,
+        "the delivery estimate is a read-only POST"
+      ],
+      [
+        0,
+        "the pickup estimate is a read-only POST, and nothing near it is"
+      ]
+    ],
+    "app/test/om-platform.test.mjs": [
+      [
+        0,
+        "queries and describes go to the Apex read endpoint with the CSRF token"
+      ],
+      [
+        0,
+        "a missing object is a 404, so om-core treats it as absent"
+      ],
+      [
+        0,
+        "nothing but reads: POSTs and other resources are refused before any request"
+      ],
+      [
+        0,
+        "the two feature settings are answered from Apex (is SomConsoleConnect deployed), in the Tooling API shape; no other tooling read passes"
+      ],
+      [
+        0,
+        "the org limits come from Apex OrgLimits in the REST /limits shape; ?only=api is the cheap poll"
+      ],
+      [
+        0,
+        "onRequest hears every call with its kind, timing, rows and the governor header"
+      ],
+      [
+        0,
+        "onRequest tolerates fakes without headers, tells batches from GETs, and never breaks a request"
+      ],
+      [
+        0,
+        "a failed call is reported too, with its status"
+      ],
+      [
+        0,
+        "parseLimits reads the header and ignores junk"
+      ],
+      [
+        0,
+        "stock and delivery estimates, the two lookups the REST API makes as POSTs, go to SomConsoleRead as batch items"
+      ],
+      [
+        0,
+        "the duplicate check of a new customer goes to SomConsoleRead as a batch item; the rules configuration isn’t available in-org"
+      ],
+      [
+        0,
+        "Order Management’s product search and details go to SomConsoleRead as batch lookups; nothing calls Connect REST"
+      ],
+      [
+        0,
+        "a store’s site address (Connect’s communities) comes from the app domain, which answers it; nothing else under Connect does"
+      ],
+      [
+        0,
+        "an expired token is fetched again once"
+      ],
+      [
+        0,
+        "console routes run through om-core, record links use the org domain, and status reads the signed-in user"
+      ],
+      [
+        0,
+        "reads made at the same moment go out as one batch call, five at most, each answered on its own"
+      ],
+      [
+        0,
+        "Agentforce's chat goes through the Apex agent bridge and keeps the agent's session"
+      ],
+      [
+        0,
+        "the agent's reply is shown as text even when it arrives wrapped as {type, value} JSON"
+      ],
+      [
+        0,
+        "an aggregate goes to GraphQL once, with the CSRF token, and none to Apex"
+      ],
+      [
+        0,
+        "a plain row query still goes to Apex"
+      ],
+      [
+        0,
+        "aggregates in the same tick are separate GraphQL calls, never batched"
+      ],
+      [
+        0,
+        "a GraphQL error is thrown and not retried through Apex"
+      ],
+      [
+        0,
+        "a GraphQL schema or shape error falls back to Apex, with the text unescaped when it is thrown"
+      ],
+      [
+        0,
+        "the guard refuses a document that is not a query or mentions mutation"
+      ],
+      [
+        0,
+        "a 401 on GraphQL fetches a fresh CSRF token and retries once"
+      ],
+      [
+        0,
+        "Apex row-limit errors, from /query or from a /batch item, become a friendly error with the raw text in detail"
+      ],
+      [
+        0,
+        "every request is a GET, an Apex read POST, or a GraphQL query POST"
+      ],
+      [
+        0,
+        "an aggregate left on Apex goes alone, so a row-limit failure cannot take its batch neighbours down"
+      ],
+      [
+        0,
+        "a GraphQL result that cannot be complete falls back to Apex for that query only"
+      ],
+      [
+        0,
+        "a multi-document translation posts every document in parallel and merges them in map()"
+      ],
+      [
+        0,
+        "every document of a multi-document translation passes the query-only guard"
+      ],
+      [
+        0,
+        "a time series is translated with the user time zone, read once from the User record"
+      ],
+      [
+        0,
+        "when the time zone cannot be read the series is translated without one (so it stays on Apex)"
+      ],
+      [
+        0,
+        "orgDomainUrl maps the app domain to the org's own domain, keeping a scratch or sandbox label"
+      ],
+      [
+        0,
+        "with graphqlReads, a row query goes to GraphQL and none to Apex"
+      ],
+      [
+        0,
+        "with graphqlReads, a describe is one objectInfos read in the REST describe shape"
+      ],
+      [
+        0,
+        "an object GraphQL does not know goes to Apex, and stays there for the page"
+      ],
+      [
+        0,
+        "a user-hidden field falls back to Apex for that read"
+      ],
+      [
+        0,
+        "objectInfos without info for an object asks Apex, whose 404 says the org lacks it"
+      ],
+      [
+        0,
+        "a GraphQL server error on a row read is thrown, not retried through Apex"
+      ],
+      [
+        0,
+        "without the switch, rows and describes still go to Apex"
+      ],
+      [
+        0,
+        "a row document that would trip the query-only guard goes to Apex, nothing is posted to GraphQL"
+      ],
+      [
+        0,
+        "a search for \"mutation\" is answered by Apex with the switch on"
+      ],
+      [
+        0,
+        "row reads in the same tick share one GraphQL document, ten at most"
+      ],
+      [
+        0,
+        "describes in the same tick share one objectInfos, twenty at most"
+      ],
+      [
+        0,
+        "one unknown object in a merged document costs only its own read"
+      ],
+      [
+        0,
+        "an error on one alias fails only that read"
+      ],
+      [
+        0,
+        "the meter counts rows over every alias"
+      ],
+      [
+        0,
+        "the meter counts a multi-alias aggregate by its first value, and a merged row read by every alias"
+      ],
+      [
+        0,
+        "a field GraphQL refuses in a merged document sends only its read to Apex, and the rest go again together once"
+      ],
+      [
+        0,
+        "the refused field is remembered: the next load skips GraphQL for that read"
+      ],
+      [
+        0,
+        "an unknown object in a merged document is attributed the same way"
+      ],
+      [
+        0,
+        "an error that names nothing in the document keeps each read alone"
+      ],
+      [
+        0,
+        "a single read refused for a field remembers the field"
+      ],
+      [
+        0,
+        "a read whose document would trip the guard stays out of a shared document"
+      ],
+      [
+        0,
+        "a refused relationship itself is learned: the next load skips GraphQL for the read"
+      ]
+    ],
+    "app/test/order-history.test.mjs": [
+      [
+        0,
+        "order history lays out every related record as events with products and relations"
+      ],
+      [
+        0,
+        "objects the org lacks drop out without an error"
+      ],
+      [
+        0,
+        "a bad Id is rejected and a missing order is a 404"
+      ]
+    ],
+    "app/test/order-number.test.mjs": [
+      [
+        0,
+        "finds an order by number, with or without leading zeros"
+      ],
+      [
+        0,
+        "a missing order is a 404 and non-digits are a 400"
+      ],
+      [
+        0,
+        "an org without OrderSummary is a 404, with no query sent"
+      ],
+      [
+        0,
+        "extra leading zeros still find the order, and an exact match wins over a padded one"
+      ]
+    ],
+    "app/test/reads-actions.test.mjs": [
+      [
+        0,
+        "order-actions by number: every part runs, matched padded and unpadded, the store through a semi-join"
+      ],
+      [
+        0,
+        "order-actions by Id filters every part by the Id"
+      ],
+      [
+        0,
+        "order-actions in an org without returns, stores or picklist info still answers with the lines"
+      ],
+      [
+        0,
+        "order-actions reads each line’s bundle and the links between a bundle and its parts"
+      ],
+      [
+        0,
+        "order-actions in an org without bundles drops the field and skips the links"
+      ],
+      [
+        0,
+        "order-actions refuses a bad order before any query"
+      ],
+      [
+        0,
+        "conversations: every way each kind links to the customer is its own query, with no OR around a semi-join"
+      ],
+      [
+        0,
+        "conversations in an org without messaging, calls or contacts still answers from the account and its cases"
+      ],
+      [
+        0,
+        "conversations refuses an account that is not an Id before any query"
+      ],
+      [
+        0,
+        "store-products: Order Management's search with the text URL-encoded, and the store's price books as a fallback"
+      ],
+      [
+        0,
+        "store-product: one product's details, by SKU, for the customer"
+      ],
+      [
+        0,
+        "customer-addresses: saved addresses, the account, and the ship-tos of their recent orders"
+      ],
+      [
+        0,
+        "stores: every store with its price books and site, and where this customer ordered in the last 12 months"
+      ],
+      [
+        0,
+        "products, addresses and stores in an org without store networks or saved addresses still answer"
+      ]
+    ],
+    "app/test/reads.test.mjs": [
+      [
+        0,
+        "every read previews as plain SELECTs with no unexpanded tokens"
+      ],
+      [
+        0,
+        "every reference token in a read names one of its own parameters"
+      ],
+      [
+        0,
+        "parameters are checked before they reach a query"
+      ],
+      [
+        0,
+        "search text is escaped, so quotes and wildcards stay literal"
+      ],
+      [
+        0,
+        "an order number matches padded and unpadded, through each kind of path"
+      ],
+      [
+        0,
+        "an order Id filters on the lookup field itself, as the console always has"
+      ],
+      [
+        0,
+        "fields the org lacks are dropped; a missing key, object or lookup skips just that query"
+      ],
+      [
+        0,
+        "the order read says which bundle each line is part of, where the org has bundles"
+      ],
+      [
+        0,
+        "`if` picks the where clause by what describe has"
+      ],
+      [
+        0,
+        "an optional parameter adds its filter only when given"
+      ],
+      [
+        0,
+        "aggregates alias their groups, drop what the org lacks, and flag capped results"
+      ],
+      [
+        0,
+        "capabilities says what the org has, and an org without an object reads as skipped"
+      ],
+      [
+        0,
+        "service-performance compares a period with the one before, reads no customer details, and skips milestones an org lacks"
+      ],
+      [
+        0,
+        "a Connect read needs an Id, and runs as a GET"
+      ],
+      [
+        0,
+        "a failing query reports its error; a dead session is thrown, not swallowed"
+      ],
+      [
+        0,
+        "the preview carries placeholders, optional filters, fallbacks and the lookup to find"
+      ],
+      [
+        0,
+        "buildQuery never selects a field twice or leaves a dangling WHERE"
+      ],
+      [
+        0,
+        "the history route still reads no personal data"
+      ],
+      [
+        0,
+        "a value is an Id only with the right key prefix, so a 15- or 18-character name or SKU stays a name or SKU"
+      ],
+      [
+        0,
+        "`only` runs just the named queries and refuses a name the read lacks"
+      ],
+      [
+        0,
+        "a describe that failed for a reason other than 404 is an error, not \"this org lacks it\""
+      ],
+      [
+        0,
+        "a dead session surfaces as code 401 whichever field carried it"
+      ],
+      [
+        0,
+        "a Connect read fills every token, and search text is URL-encoded so it cannot add parameters"
+      ],
+      [
+        0,
+        "store and SKU parameters are checked before they reach a path"
+      ],
+      [
+        0,
+        "a Connect read previews with a placeholder for each token"
+      ],
+      [
+        0,
+        "a Connect read missing an optional parameter is skipped, and says which"
+      ]
+    ],
+    "app/test/scale.test.mjs": [
+      [
+        0,
+        "a panel whose query hit the 2,000-row cap says so"
+      ],
+      [
+        0,
+        "a query Salesforce timed out inside /composite reads as \"try a shorter range\""
+      ],
+      [
+        0,
+        "whole-history queries are bounded to 12 months and filters and sorts use indexed fields"
+      ],
+      [
+        0,
+        "open process exceptions are New, Triaged or Paused"
+      ],
+      [
+        0,
+        "the page shows a note on capped panels"
+      ]
+    ],
+    "app/test/scope-filters.test.mjs": [
+      [
+        0,
+        "scopeOf: an Id each or nothing, anything else is a 400"
+      ],
+      [
+        0,
+        "pre() and the scoper's clause(): an optional clause, and a query's only condition"
+      ],
+      [
+        0,
+        "/api/filters lists the org's stores and sales channels, and null for one its orders can't be filtered by"
+      ],
+      [
+        0,
+        "/api/filters: a failed read fails the route, so the page can tell it from an org with no stores"
+      ],
+      [
+        0,
+        "without filters the console and Dashboard ask exactly what they did"
+      ],
+      [
+        0,
+        "the console: every query on an order-tied object carries the store and channel through its own path"
+      ],
+      [
+        0,
+        "the Dashboard: every query carries the scope, payments through their order payment summary, invoices by semi-join"
+      ],
+      [
+        0,
+        "a panel whose object can't reach its order says so instead of counting every store"
+      ],
+      [
+        0,
+        "the map's product: stock is the same for every store; its Orders fallback is filtered"
+      ],
+      [
+        0,
+        "sample data: the filters offer stores and channels, and a pick narrows the console and the Dashboard"
+      ]
+    ],
+    "app/test/sf-conn.test.mjs": [
+      [
+        0,
+        "connects with the token from show-access-token and calls onConnect"
+      ],
+      [
+        0,
+        "an unknown alias is \"not connected\", not an error"
+      ],
+      [
+        0,
+        "refuses a blocked org and a redacted token"
+      ],
+      [
+        0,
+        "OM_BLOCKED adds orgs to refuse; with it unset and an empty config, nothing is refused"
+      ],
+      [
+        0,
+        "a malformed OM_BLOCKED pattern is an error, not an empty block list"
+      ],
+      [
+        0,
+        "api retries once on 401 with a fresh token"
+      ],
+      [
+        0,
+        "a socket failure is retried, then reported with its cause"
+      ],
+      [
+        0,
+        "a missing sf CLI says so instead of looking like a sign-in problem"
+      ],
+      [
+        0,
+        "sfCli reports a missing executable as SfNotFound"
+      ],
+      [
+        0,
+        "a request that takes too long is cut off with a clear message"
+      ],
+      [
+        0,
+        "Salesforce QUERY_TIMEOUT gets the same clear message"
+      ]
+    ],
+    "app/test/sign-in-screen.test.mjs": [
+      [
+        0,
+        "a 409 alone is not a sign-in failure; an expired sign-in and a blocked org’s refusal are"
+      ],
+      [
+        0,
+        "hosted, a blocked domain and a blocked login are refused with the mark"
+      ],
+      [
+        0,
+        "in Cowork, a blocked org is refused with the mark, and the console shows the sign-in screen"
+      ],
+      [
+        0,
+        "inside Salesforce, a blocked app domain signs nothing in"
+      ],
+      [
+        0,
+        "hosted, a kept session is held to the block list as it is now, at load and later"
+      ],
+      [
+        0,
+        "hosted, an empty My Domain and consumer key are the deployment’s own"
+      ],
+      [
+        0,
+        "hosted, a deployment with no domain or consumer key asks for them"
+      ],
+      [
+        0,
+        "an empty block list refuses nobody, on every sign-in path"
+      ]
+    ],
+    "app/test/status-definitions.test.mjs": [
+      [
+        0,
+        "the shared definitions keep their text"
+      ],
+      [
+        0,
+        "the stuck KPI counts only open statuses"
+      ],
+      [
+        0,
+        "the console map, open demand and open age all use the shared fulfillment definition"
+      ],
+      [
+        0,
+        "every open exception filter is the shared one"
+      ],
+      [
+        0,
+        "the scorecard counts picked-up orders as fulfilled and keeps closed ones out of its columns"
+      ],
+      [
+        0,
+        "no read spells out its own fulfillment order status list"
+      ]
+    ],
+    "app/test/themes.test.mjs": [
+      [
+        0,
+        "light: text colours reach 4.5:1 on --panel"
+      ],
+      [
+        0,
+        "dark: text colours reach 4.5:1 on --panel"
+      ],
+      [
+        0,
+        "standard: text colours reach 4.5:1 on every surface"
+      ],
+      [
+        0,
+        "standard: control borders (--line2) reach 3:1 on every surface"
+      ],
+      [
+        0,
+        "light: text colours reach 4.5:1 on every surface"
+      ],
+      [
+        0,
+        "light: control borders (--line2) reach 3:1 on every surface"
+      ],
+      [
+        0,
+        "dark: text colours reach 4.5:1 on every surface"
+      ],
+      [
+        0,
+        "dark: control borders (--line2) reach 3:1 on every surface"
+      ],
+      [
+        0,
+        "standard: --muted reaches 4.5:1 on a tag (--chip)"
+      ],
+      [
+        0,
+        "the sign-in field uses the control border, not the divider line"
+      ],
+      [
+        0,
+        "Standard keeps its values"
+      ],
+      [
+        0,
+        "tokens.css: no hard-coded colours outside the theme blocks"
+      ],
+      [
+        0,
+        "console: links tokens.css and keeps no colours or theme blocks of its own"
+      ],
+      [
+        0,
+        "console: every var() in the stylesheet is declared"
+      ],
+      [
+        0,
+        "the scale check catches raw values and lets layout through"
+      ],
+      [
+        0,
+        "console: spacing, type, radii, motion and tints use the tokens"
+      ],
+      [
+        0,
+        "light: data colours reach 3:1 on --panel"
+      ],
+      [
+        0,
+        "light: map labels reach 4.5:1 on their fills"
+      ],
+      [
+        0,
+        "dark: data colours reach 3:1 on --panel"
+      ],
+      [
+        0,
+        "dark: map labels reach 4.5:1 on their fills"
+      ],
+      [
+        0,
+        "no hex colour literals in the page script or markup, except the logo stroke"
+      ],
+      [
+        0,
+        "head script applies the saved theme before styles, and tolerates junk"
+      ],
+      [
+        0,
+        "both theme controls offer the three themes"
+      ]
+    ],
+    "app/test/tokens-ratchet.test.mjs": [
+      [
+        0,
+        "the check finds hand-typed values and lets tokens and plain values through"
+      ],
+      [
+        0,
+        "the console types no new letter-spacing, line-height, font-stretch, z-index or opacity by hand"
+      ],
+      [
+        0,
+        "every token in tokens.css is on the design page and in the doc, except the ones listed"
+      ]
+    ],
+    "app/test/ui-bundle.test.mjs": [
+      [
+        0,
+        "inline scripts become files in order, and script tags with src stay as they are"
+      ],
+      [
+        0,
+        "the real page has no inline script left after the split, and no inline event handlers (the app domain blocks both)"
+      ],
+      [
+        0,
+        "the console page takes its mode from om-mode.js, where the in-org mode is the Salesforce app domain (mode.test.mjs)"
+      ],
+      [
+        0,
+        "every local script reference gets the build version, so a redeploy never runs cached files"
+      ],
+      [
+        0,
+        "the console never loads the write layer"
+      ],
+      [
+        0,
+        "the design tokens are versioned like the scripts"
+      ]
+    ]
+  },
+  "environment": {
+    "timeZone": "UTC",
+    "unitCases": 1575,
+    "note": "Unit identities rerecorded from unchanged sourceCommit in UTC; the 234 browser identities are unchanged. Only two dynamic timestamp names differed; assertions and fixtures are unchanged."
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "sourceCommit": "9ce36e5bd630e35653a51181371923ce329301d2",
+  "normalization": "Only relative JavaScript import specifiers; all other bytes are unchanged.",
+  "files": {
+    "agent-panel.js": {
+      "source": "shared/agent/agent-panel.js",
+      "sha256": "a41605e49905a63e00b72809180568c65cacd641fd9e90dbfa7c7b341fa0de1e"
+    },
+    "cities.js": {
+      "source": "operations-console/cities.js",
+      "sha256": "98e0348a0952a63b79f12ae2dd9c2089d78379f29eb7ec2ba4699f9e6c034526"
+    },
+    "console-banner.js": {
+      "source": "operations-console/console-banner.js",
+      "sha256": "a71539ce96a88bb1fc3cd7cee1702267524b81c4552a430a5ed020037ddd3ebd"
+    },
+    "console-charts.js": {
+      "source": "operations-console/console-charts.js",
+      "sha256": "7f947ea2b8533d91fe3db8e46558fa659f63c6837c838d868b3ef0acf33c52ba"
+    },
+    "console-csv.js": {
+      "source": "operations-console/console-csv.js",
+      "sha256": "0a275397257d2a5371ce528abea154d63c9baaeaf7bc3b87e35e205d4838d484"
+    },
+    "console-dash-view.js": {
+      "source": "operations-console/console-dash-view.js",
+      "sha256": "f27114634c4f0f0542e43c910c96e1f8451ea16fe72607d7cdb56082eb79078b"
+    },
+    "console-demo.js": {
+      "source": "operations-console/console-demo.js",
+      "sha256": "15f7dfae02cd2f0e107473bd57e7f6f43eddd3d2818b1f4e0e7c69c3b8c48564"
+    },
+    "console-drawers.js": {
+      "source": "operations-console/console-drawers.js",
+      "sha256": "5482a0193b83e11bb65352e731459956f4b7094054e0bdf2332427dcd74b077b"
+    },
+    "console-geo.js": {
+      "source": "operations-console/console-geo.js",
+      "sha256": "e6db2ab283778d267d7199b791a7a89e619e582f0b3dc165161397962f8eb950"
+    },
+    "console-jcache.js": {
+      "source": "operations-console/console-jcache.js",
+      "sha256": "014388701a306598ec24c5accd6e41489ad23b7559f783f35a58e1083bbe76ff"
+    },
+    "console-kit.js": {
+      "source": "operations-console/console-kit.js",
+      "sha256": "5d42e378c01cf6e532304185ab854b07795991fe60ee47960f7274035639fa24"
+    },
+    "console-labels.js": {
+      "source": "operations-console/console-labels.js",
+      "sha256": "e10a431557989352cd29c3507698673e0d8edf2b723587755aee92a2643c66be"
+    },
+    "console-limits-ref.js": {
+      "source": "operations-console/console-limits-ref.js",
+      "sha256": "d1f96d657c00a6f07ab9982ed13e39af510bb44ac31412827d021ecb78cb646d"
+    },
+    "console-limits-view.js": {
+      "source": "operations-console/console-limits-view.js",
+      "sha256": "a4d4dabe7709919539d7f7b2c2e41f1e73bbae2fdb2c7ff2efad561fb2057820"
+    },
+    "console-limits.js": {
+      "source": "operations-console/console-limits.js",
+      "sha256": "e67778e312d8640365090fdbfbcb3c358172ebe166902dfb0364df29f41f5c8e"
+    },
+    "console-map-view.js": {
+      "source": "operations-console/console-map-view.js",
+      "sha256": "468e09603ddd73dde3f1480749297acde5ae408f5a3be1000d60f75900b7a616"
+    },
+    "console-panels.js": {
+      "source": "operations-console/console-panels.js",
+      "sha256": "bc0883d9a7bf8305587f97cb853519f71253f6c49f9605a3704060e1ba2044c9"
+    },
+    "console-service-view.js": {
+      "source": "operations-console/console-service-view.js",
+      "sha256": "361a6e13e438ea75005cf2818decd1ffceb6e7e5ac65503d49b494793e5ad8ca"
+    },
+    "console-state.js": {
+      "source": "operations-console/console-state.js",
+      "sha256": "13f67c57b54a94a667495652009e9de3c7c8a989376c4d2ecfc858903cfad432"
+    },
+    "design/index.html": {
+      "source": "shared/design/index.html",
+      "sha256": "ba4ae390e522173bf1e9f062b673ded86f2db548c0a854f83e2cde6fb0417998"
+    },
+    "geo.js": {
+      "source": "operations-console/geo.js",
+      "sha256": "ee242cbc1e39f976ccf601b59d25b1a4b65fda109570f73a435493dc252a05e3"
+    },
+    "index.html": {
+      "source": "operations-console/index.html",
+      "sha256": "755b0a8c7a376fe276f9427489331466e739c884827446359a2131c33b0818f5"
+    },
+    "om-agent.js": {
+      "source": "shared/agent/om-agent.js",
+      "sha256": "1d9f7382ea5e25e91f6bf8fc90d5de58c87fc9f009638b4cdd8677796cdc3c75"
+    },
+    "om-bundles.js": {
+      "source": "shared/data/om-bundles.js",
+      "sha256": "144731a46843709083cd9e2ed0e1ceb0a4e3b1d06f3d7a233b3128696a543ec0"
+    },
+    "om-config.js": {
+      "source": "shared/transport/om-config.js",
+      "sha256": "ecfa1ddc6605200c5304d6ce1824b6fd7c765f6bb3429230d58df319b6eb9ca1"
+    },
+    "om-core-dashboard.js": {
+      "source": "operations-console/data/om-core-dashboard.js",
+      "sha256": "6ea7113546253e8d3a827370ed34abd8c4ff7181194e458da13d8ae5d623b445"
+    },
+    "om-core-org.js": {
+      "source": "shared/data/om-core-org.js",
+      "sha256": "e881375c77c3a7fadfcc037a13c7d053e37f38076e5a3883283de3bba7a0e9fe"
+    },
+    "om-core-util.js": {
+      "source": "shared/data/om-core-util.js",
+      "sha256": "d19e78c654f30ca175568d50159fcc206718962d7162d88bf606daf72924ccc8"
+    },
+    "om-graphql.js": {
+      "source": "shared/transport/om-graphql.js",
+      "sha256": "42f4a6f6beb3d4f0439f37f3882d72f6b59535b49d3a36a0ca92b459c6553b8b"
+    },
+    "om-http.js": {
+      "source": "shared/transport/om-http.js",
+      "sha256": "9d983a0ce7579b9ea7cf2e83479e5ebe3c0ce39290aed3ad6d188d4ef28e1939"
+    },
+    "om-meter.js": {
+      "source": "shared/transport/om-meter.js",
+      "sha256": "ab59714c6c7351af668a15bee71b12428a546986fde0620cef2fe27ee910948d"
+    },
+    "om-mode.js": {
+      "source": "shared/transport/om-mode.js",
+      "sha256": "3c686469c2ea12be0341676385b0832a13913b9916e39ccf7ac8fb585a23c52f"
+    },
+    "om-reads.js": {
+      "source": "shared/data/om-reads.js",
+      "sha256": "a420b7c8daff1d7c224efd89564512494f1fe80c18f6e2603d3c41a3a4058bba"
+    },
+    "om-rules.js": {
+      "source": "shared/data/om-rules.js",
+      "sha256": "786b7d3336eaebc0c52aa540d4e05d4ecf767539cf6b6fe14d893ca9082ef1ed"
+    },
+    "tokens.css": {
+      "source": "shared/ui/tokens.css",
+      "sha256": "4298b13e2cf5cc2275c86a0204d9d503e5e98ed0b8b371e82f7857c302234c29"
+    }
+  },
+  "previousBaseline": "ed378969deb691bbfcad3643bb8de9115fb0e5ec"
+}

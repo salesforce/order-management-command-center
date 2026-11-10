@@ -1,0 +1,5 @@
+{
+  "packageDirectories": [{ "path": "force-app", "default": true }],
+  "name": "oms-app-tabs",
+  "sourceApiVersion": "68.0"
+}

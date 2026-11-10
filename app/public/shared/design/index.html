@@ -1,0 +1,288 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026, Salesforce, Inc.
+  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OM design tokens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
+<script>
+// Same theme switch as the apps (localStorage omc.theme), so this page opens in the theme last used.
+(function () {
+  var t = 'standard';
+  try { var s = localStorage.getItem('omc.theme'); if (s === 'slds-light' || s === 'slds-dark') t = s; } catch (e) {}
+  if (t !== 'standard') document.documentElement.dataset.theme = t;
+})();
+</script>
+<link rel="stylesheet" href="../tokens.css">
+<style>
+/* The reference page for tokens.css. Every value on it is a token; the components are the apps' own, built from them. */
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 30% -10%,var(--bg-grad) 0%,var(--bg) 60%) fixed;color:var(--ink);font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-body);font-variant-numeric:tabular-nums}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
+header{position:sticky;top:0;z-index:var(--z-header);display:flex;align-items:center;gap:var(--sp-7);padding:var(--sp-5) var(--gutter);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(8px)}
+header b{font-size:17px;font-stretch:80%}
+header .muted{font-size:var(--fs-md)}
+.mark{width:30px;height:30px;border-radius:var(--radius-md);background:var(--brand-grad)}
+.seg{display:flex;margin-left:auto;border:1px solid var(--line2);border-radius:9px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-radius:0;background:transparent;padding:5px 11px;color:var(--ink2);font-size:var(--fs-md);cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--raise);color:var(--ink);font-weight:var(--fw-semibold);box-shadow:inset 0 -2px 0 var(--signal)}
+main{max-width:1180px;margin:0 auto;padding:var(--sp-10) var(--gutter) 64px;display:grid;gap:var(--sp-9)}
+h1{margin:0;font-size:var(--fs-4xl);font-stretch:82%;font-weight:var(--fw-display)}
+h1+p{margin:var(--sp-2) 0 0;color:var(--ink2);max-width:760px}
+code{font:var(--fs-sm)/1.4 var(--font-mono);color:var(--signal2)}
+.muted{color:var(--muted)}
+.card{background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);padding:var(--card-pad)}
+.card>h2{font-size:var(--section-size);text-transform:uppercase;letter-spacing:var(--section-track);color:var(--ink2);margin:0 0 var(--sp-6)}
+.card>p{margin:0 0 var(--sp-6);color:var(--ink2);font-size:var(--fs-base);max-width:820px}
+.card h3{font-size:var(--fs-base);font-weight:var(--fw-semibold);color:var(--ink2);margin:var(--sp-8) 0 var(--sp-4)}
+.row{display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:center}
+
+/* Swatches */
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:var(--sp-4)}
+.s{display:flex;gap:var(--sp-4);align-items:center;min-width:0}
+.s i{width:34px;height:34px;border-radius:var(--radius-md);border:1px solid var(--line);flex:none;background:var(--v)}
+.s span{display:flex;flex-direction:column;min-width:0;font-size:var(--fs-sm)}
+.s code{font-size:var(--fs-xs)}
+.s small{color:var(--muted);font-family:var(--font-mono);font-size:var(--fs-3xs);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Scale */
+.scale{display:grid;grid-template-columns:150px 1fr 70px;gap:var(--sp-3) var(--sp-6);align-items:center;font-size:var(--fs-sm)}
+.scale .b{height:12px;background:var(--signal);border-radius:var(--radius-xs)}
+.radii{display:flex;flex-wrap:wrap;gap:var(--sp-6)}
+.radii div{width:86px;height:64px;border:1px solid var(--line2);background:var(--panel2);display:grid;place-items:end center;padding:var(--sp-2);font-size:var(--fs-3xs)}
+.types div{display:flex;align-items:baseline;gap:var(--sp-6);padding:var(--sp-2) 0;border-bottom:1px solid var(--line)}
+.types code{width:110px;flex:none}
+.elev{display:flex;flex-wrap:wrap;gap:var(--sp-9)}
+.elev div{width:160px;height:80px;border-radius:var(--radius-lg);background:var(--panel);border:1px solid var(--line);display:grid;place-items:center}
+
+/* Components, as the apps style them */
+.btn{cursor:pointer;border:1px solid var(--btn-line);background:var(--btn-bg);border-radius:var(--btn-radius);padding:var(--btn-pad);transition:border-color var(--dur-fast),background var(--dur-fast)}
+.btn:hover:not(:disabled){border-color:var(--btn-hover-line)}
+.btn:disabled{opacity:var(--btn-disabled-opacity);cursor:not-allowed}
+.btn.primary{background:var(--btn-primary-bg);border-color:var(--btn-primary-bg);color:var(--btn-primary-ink);font-weight:var(--btn-weight)}
+.btn.danger{background:var(--btn-danger-bg);border-color:var(--btn-danger-bg);color:var(--btn-danger-ink);font-weight:var(--btn-weight)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--btn-ghost-ink)}
+.btn.ghost:hover:not(:disabled){border-color:var(--btn-line);color:var(--ink)}
+.btn.sm{padding:var(--btn-sm-pad);font-size:var(--btn-sm-size)}
+.btn.lg{padding:var(--btn-lg-pad);font-size:var(--btn-lg-size)}
+.btn.link{border:0;background:none;padding:0;color:var(--signal)}
+.btn.next{outline:var(--next-ring);outline-offset:var(--next-offset);animation:next var(--next-pulse) var(--ease-out) infinite}
+@keyframes next{from{box-shadow:0 0 0 0 var(--next-glow)}70%,to{box-shadow:0 0 0 8px transparent}}
+@media (prefers-reduced-motion:reduce){.btn.next{animation:none}}
+.pill{font-size:var(--tag-size);padding:var(--tag-pad);border-radius:var(--tag-radius);background:var(--tag-bg);color:var(--tag-ink);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.pill s{width:7px;height:7px;border-radius:50%;text-decoration:none;display:inline-block;background:var(--c)}
+.pill.tone{background:color-mix(in srgb,var(--c) var(--tint-fill),transparent);color:color-mix(in srgb,var(--t,var(--ink)) var(--tint-ink),var(--ink))}
+.badge{font-size:var(--tag-size);font-weight:var(--fw-semibold);padding:var(--tag-pad);border-radius:var(--tag-radius);border:1px solid var(--badge-line);color:var(--tag-ink)}
+.badge.tone{color:var(--c);border-color:color-mix(in srgb,var(--c) var(--tint-line),transparent)}
+.chip{font-size:var(--chip-size);padding:var(--chip-pad);border-radius:var(--tag-radius);border:1px solid var(--chip-line);background:transparent;color:var(--tag-ink);cursor:pointer}
+.chip.on{background:var(--btn-primary-bg);border-color:var(--btn-primary-bg);color:var(--btn-primary-ink);font-weight:var(--fw-semibold)}
+.sq{font-size:var(--tag-square-size);font-weight:var(--tag-square-weight);padding:var(--tag-square-pad);border-radius:var(--tag-square-radius);background:var(--tag-square-bg);color:var(--tag-ink)}
+.sq.tone{background:color-mix(in srgb,var(--c) var(--tint-fill),transparent);color:color-mix(in srgb,var(--c) var(--tint-ink),var(--ink))}
+.dot{width:var(--dot-size);height:var(--dot-size);border-radius:50%;background:var(--c);display:inline-block}
+.fld{display:flex;flex-direction:column;gap:var(--sp-2);font-size:var(--fs-sm);color:var(--ink2)}
+.fld input,.fld select{background:var(--field-bg);border:1px solid var(--field-line);border-radius:var(--field-radius);padding:var(--field-pad);color:var(--ink);min-width:200px}
+.fld input:focus,.fld select:focus{border-color:var(--field-focus);outline:none}
+.alert{border:1px solid color-mix(in srgb,var(--c) var(--tint-line),transparent);background:color-mix(in srgb,var(--c) var(--tint-alert),transparent);border-radius:var(--radius-lg);padding:9px 14px;font-size:var(--fs-base);flex:1;min-width:240px}
+.pop{background:var(--pop-bg);border:1px solid var(--pop-line);border-radius:var(--pop-radius);box-shadow:var(--pop-shadow);padding:var(--sp-2);display:flex;flex-direction:column;min-width:180px}
+.pop button{border:0;background:transparent;text-align:left;padding:7px 10px;font-size:var(--fs-md);color:var(--ink2);border-radius:var(--radius-sm);cursor:pointer}
+.pop button:hover{background:var(--raise);color:var(--ink)}
+.kpi{background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);padding:12px 16px;position:relative;overflow:hidden;min-width:180px}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--line2))}
+.kpi .l{color:var(--muted);font-size:var(--label-size);text-transform:uppercase;letter-spacing:var(--label-track)}
+.kpi .v{font-size:var(--fs-kpi);font-weight:var(--fw-display);font-stretch:var(--stretch-figure);line-height:var(--lh-tight);margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
+th{text-align:left;font-weight:var(--th-weight);color:var(--th-ink);font-size:var(--th-size);text-transform:uppercase;letter-spacing:var(--th-track);padding:var(--cell-pad);border-bottom:1px solid var(--row-line)}
+td{padding:var(--cell-pad);border-bottom:1px solid var(--row-line)}
+tbody tr:hover{background:var(--row-hover)}
+.num{text-align:right}
+
+/* Charts */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:var(--sp-9)}
+.chart{width:100%;display:block;overflow:visible}
+.chart .grid-l{stroke:var(--chart-grid);stroke-width:1}
+.chart .ax{fill:var(--chart-axis);font-size:var(--chart-axis-size)}
+.hb{display:grid;gap:7px}
+.hb .r{display:grid;grid-template-columns:110px 1fr 54px;gap:var(--sp-5);align-items:center;font-size:var(--fs-md)}
+.hb .r span:last-child{text-align:right;font-weight:var(--fw-semibold)}
+.bar{height:var(--chart-bar);background:var(--chart-track);border-radius:var(--chart-bar-radius);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c);border-radius:0 var(--chart-bar-radius) var(--chart-bar-radius) 0}
+.stack{display:flex;gap:2px;height:22px}
+.stack i{display:block;height:100%;background:var(--c)}
+.stack i:first-child{border-radius:4px 0 0 4px} .stack i:last-child{border-radius:0 4px 4px 0}
+.keys{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:9px;font-size:var(--fs-md);color:var(--ink2)}
+.keys s{display:inline-block;width:var(--chart-key);height:var(--chart-key);border-radius:var(--chart-key-radius);margin-right:6px;text-decoration:none;background:var(--c)}
+.ramp{display:flex;gap:2px}
+.ramp i{flex:1;height:26px;background:var(--c)}
+.ramp i:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm)} .ramp i:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.gauge{fill:none;stroke-width:10;stroke-linecap:round}
+</style>
+</head>
+<body>
+<header>
+  <div class="mark" aria-hidden="true"></div>
+  <b>OM design tokens</b>
+  <span class="muted">tokens.css, shared by the Salesforce Order Management Operations Console and OM Service Console</span>
+  <div class="seg" role="group" aria-label="Theme">
+    <button data-theme="standard">Standard</button><button data-theme="slds-light">Salesforce Light</button><button data-theme="slds-dark">Salesforce Dark</button>
+  </div>
+</header>
+<main>
+  <div>
+    <h1>Design tokens</h1>
+    <p>Every colour, size and component value both apps use, in the theme picked above. Style with these tokens, never with raw values: a page's stylesheet keeps only layout. The token reference is in <code>docs/design-tokens.md</code>.</p>
+  </div>
+
+  <section class="card"><h2>Colour</h2>
+    <p>Theme colours change with the theme; everything else is built from them. Values shown are this theme's.</p>
+    <div id="colours"></div>
+  </section>
+
+  <section class="card"><h2>Buttons</h2>
+    <p>One primary per view, for the next step. Danger changes or cancels something. Ghost and link for what's secondary.</p>
+    <div class="row">
+      <button class="btn primary">Primary</button><button class="btn">Default</button><button class="btn danger">Danger</button>
+      <button class="btn ghost">Ghost</button><button class="btn link">Link</button><button class="btn" disabled>Disabled</button>
+    </div>
+    <h3>Sizes</h3>
+    <div class="row"><button class="btn primary sm">Small</button><button class="btn primary">Default</button><button class="btn primary lg">Large</button></div>
+    <h3>Agentforce's next step</h3>
+    <div class="row"><button class="btn primary next">Preview</button><span class="muted">What to press next, in a change Agentforce filled in: <code>--next-ring</code> <code>--next-glow</code></span></div>
+  </section>
+
+  <section class="card"><h2>Tags</h2>
+    <p>A pill is a status, a badge a fact about a record, a chip a filter you press, a square tag a severity, kind or count. A toned tag mixes its tone into the fill (<code>--tint-fill</code>) or outline (<code>--tint-line</code>).</p>
+    <h3>Pills: status</h3>
+    <div class="row" id="pills"></div>
+    <h3>Badges</h3>
+    <div class="row">
+      <span class="badge">Neutral</span><span class="badge tone" style="--c:var(--green)">Verified</span><span class="badge tone" style="--c:var(--amber)">Past due</span>
+      <span class="badge tone" style="--c:var(--red)">Blocked</span><span class="badge tone" style="--c:var(--agent)">Gold tier</span>
+    </div>
+    <h3>Chips</h3>
+    <div class="row" id="chips"><button class="chip on">All</button><button class="chip">Open</button><button class="chip">Shipped</button><button class="chip">Returned</button></div>
+    <h3>Square tags and dots</h3>
+    <div class="row">
+      <span class="sq">Low</span><span class="sq tone" style="--c:var(--amber)">Medium</span><span class="sq tone" style="--c:var(--red)">High</span>
+      <span class="dot" style="--c:var(--green)"></span><span class="dot" style="--c:var(--amber)"></span><span class="dot" style="--c:var(--red)"></span><span class="dot" style="--c:var(--agent)"></span>
+    </div>
+  </section>
+
+  <section class="card"><h2>Fields, alerts and popovers</h2>
+    <div class="row" style="align-items:flex-start;gap:var(--sp-9)">
+      <label class="fld">Order number<input type="text" value="00001234"></label>
+      <label class="fld">Reason<select><option>Damaged</option><option>Wrong size</option></select></label>
+      <div class="pop" role="menu" aria-label="Order actions"><button role="menuitem">Cancel items</button><button role="menuitem">Adjust price</button><button role="menuitem">Return</button></div>
+    </div>
+    <h3>Alerts</h3>
+    <div class="row">
+      <div class="alert" style="--c:var(--signal)">Info: the store recalculated tax.</div>
+      <div class="alert" style="--c:var(--green)">Done: refund of $24.00 submitted.</div>
+      <div class="alert" style="--c:var(--amber)">Warning: one item is low on stock.</div>
+      <div class="alert" style="--c:var(--red)">Failed: the payment was declined.</div>
+    </div>
+  </section>
+
+  <section class="card"><h2>Cards, KPIs and tables</h2>
+    <div class="row">
+      <div class="kpi" style="--c:var(--signal)"><div class="l">Orders today</div><div class="v">1,284</div></div>
+      <div class="kpi" style="--c:var(--amber)"><div class="l">Open exceptions</div><div class="v">37</div></div>
+      <div class="kpi" style="--c:var(--red)"><div class="l">Failed payments</div><div class="v">4</div></div>
+      <div class="kpi" style="--c:var(--agent)"><div class="l">Agent proposals</div><div class="v">12</div></div>
+    </div>
+    <h3>Table</h3>
+    <table><thead><tr><th>Order</th><th>Status</th><th class="num">Total</th></tr></thead><tbody id="rows"></tbody></table>
+  </section>
+
+  <section class="card"><h2>Charts</h2>
+    <p>Series take <code>--d1</code>…<code>--d6</code> in order. Order steps take <code>--st1</code>…<code>--st4</code>, then done, failed and warning; anything else <code>--st-o1</code>…<code>--st-o3</code>. Amounts on a map take the <code>--ramp</code>. Gridlines, axes and tracks are the <code>--chart-*</code> tokens.</p>
+    <div class="charts">
+      <div><h3>Columns, one series</h3><svg class="chart" id="cols" viewBox="0 0 360 170" role="img" aria-label="Sample column chart"></svg></div>
+      <div><h3>Horizontal bars, categorical</h3><div class="hb" id="hbars"></div></div>
+      <div><h3>Status stack</h3><div class="stack" id="stack"></div><div class="keys" id="stackKeys"></div></div>
+      <div><h3>Sequential ramp and gauges</h3><div class="ramp" id="ramp"></div>
+        <div class="row" style="margin-top:var(--sp-6)" id="gauges"></div></div>
+    </div>
+  </section>
+
+  <section class="card"><h2>Scale</h2>
+    <h3>Space</h3><div class="scale" id="space"></div>
+    <h3>Radius</h3><div class="radii" id="radii"></div>
+    <h3>Type</h3><div class="types" id="types"></div>
+    <h3>Elevation</h3><div class="elev"><div style="box-shadow:var(--shadow-1)"><code>--shadow-1</code></div><div style="box-shadow:var(--shadow-2)"><code>--shadow-2</code></div><div style="box-shadow:var(--shadow-3)"><code>--shadow-3</code></div></div>
+  </section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const val = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const GROUPS = [
+  ['Surfaces and lines', ['--bg', '--panel', '--panel2', '--raise', '--line', '--line2', '--chip', '--chip2']],
+  ['Text', ['--ink', '--ink2', '--muted', '--on-accent']],
+  ['Accents', ['--signal', '--signal2', '--green', '--amber', '--red', '--agent']],
+  ['Chart series', ['--d1', '--d2', '--d3', '--d4', '--d5', '--d6']],
+  ['Order steps and status', ['--st1', '--st2', '--st3', '--st4', '--st-done', '--st-fail', '--st-warn', '--st-run', '--st-o1', '--st-o2', '--st-o3']],
+  ['Sequential ramp', ['--ramp1', '--ramp2', '--ramp3', '--ramp4']],
+  ['Map', ['--land', '--land-line', '--lbl', '--lbl-ink']],
+];
+function paint() {
+  const t = document.documentElement.dataset.theme || 'standard';
+  for (const b of document.querySelectorAll('.seg button')) { b.classList.toggle('on', b.dataset.theme === t); b.setAttribute('aria-pressed', b.dataset.theme === t); }
+  $('#colours').innerHTML = GROUPS.map(([h, vs]) => `<h3>${h}</h3><div class="sw">${vs.map((v) => `<div class="s"><i style="--v:var(${v})"></i><span><code>${v}</code><small>${val(v)}</small></span></div>`).join('')}</div>`).join('');
+  for (const id of ['space', 'radii', 'types']) $('#' + id).innerHTML = SCALE[id]();
+}
+const SCALE = {
+  space: () => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => `<code>--sp-${n}</code><div><div class="b" style="width:var(--sp-${n})"></div></div><span class="muted">${val('--sp-' + n)}</span>`).join(''),
+  radii: () => ['xs', 'sm', 'md', 'lg', 'xl', '2xl', 'pill'].map((n) => `<div style="border-radius:var(--radius-${n})"><code>--radius-${n}</code></div>`).join(''),
+  types: () => ['3xs', '2xs', 'xs', 'sm', 'md', 'base', 'body', 'lg', 'xl', '2xl', '3xl', '4xl', 'kpi'].map((n) => `<div><code>--fs-${n}</code><span style="font-size:var(--fs-${n})">Order 00001234 shipped</span><span class="muted" style="margin-left:auto">${val('--fs-' + n)}</span></div>`).join(''),
+};
+const STATUS = [['Created', '--st1'], ['Allocated', '--st2'], ['Fulfilling', '--st3'], ['Shipped', '--st4'], ['Delivered', '--st-done'], ['Cancelled', '--st-fail'], ['Exception', '--st-warn'], ['Other', '--st-o1']];
+$('#pills').innerHTML = STATUS.map(([s, c]) => `<span class="pill"><s style="--c:var(${c})"></s>${s}</span>`).join('') +
+  [['Paid', 'var(--st-done)', 'var(--green)'], ['Declined', 'var(--st-fail)', 'var(--red)'], ['Running', 'var(--st-run)', 'var(--signal2)']].map(([s, c, t]) => `<span class="pill tone" style="--c:${c};--t:${t}">${s}</span>`).join('');
+$('#rows').innerHTML = [['00001234', 'Shipped', '--st4', '$128.40'], ['00001235', 'Allocated', '--st2', '$54.00'], ['00001236', 'Cancelled', '--st-fail', '$0.00']]
+  .map(([o, s, c, t]) => `<tr><td>${o}</td><td><span class="pill"><s style="--c:var(${c})"></s>${s}</span></td><td class="num">${t}</td></tr>`).join('');
+// Columns: gridlines and axis labels from the chart tokens, bars in --d1.
+(() => {
+  const vals = [42, 58, 51, 76, 64, 88, 71], W = 360, H = 170, L = 30, B = 22, max = 100, bw = (W - L) / vals.length;
+  let s = [0, 25, 50, 75, 100].map((g) => { const y = H - B - (g / max) * (H - B - 8); return `<line class="grid-l" x1="${L}" x2="${W}" y1="${y}" y2="${y}"/><text class="ax" x="${L - 6}" y="${y + 4}" text-anchor="end">${g}</text>`; }).join('');
+  s += vals.map((v, i) => { const h = (v / max) * (H - B - 8), x = L + i * bw + bw * 0.18; return `<rect x="${x}" y="${H - B - h}" width="${bw * 0.64}" height="${h}" rx="3" fill="var(--d1)"/><text class="ax" x="${x + bw * 0.32}" y="${H - 6}" text-anchor="middle">${'MTWTFSS'[i]}</text>`; }).join('');
+  $('#cols').innerHTML = s;
+})();
+$('#hbars').innerHTML = [['Web', 82], ['Store', 64], ['Call center', 41], ['Marketplace', 33], ['Social', 18], ['Partner', 9]]
+  .map(([k, n], i) => `<div class="r"><span>${k}</span><div class="bar"><i style="width:${n}%;--c:var(--d${i + 1})"></i></div><span>${n}</span></div>`).join('');
+const ST = [['Created', 8, '--st1'], ['Allocated', 14, '--st2'], ['Fulfilling', 22, '--st3'], ['Shipped', 30, '--st4'], ['Delivered', 18, '--st-done'], ['Cancelled', 5, '--st-fail'], ['Exception', 3, '--st-warn']];
+$('#stack').innerHTML = ST.map(([k, n, c]) => `<i title="${k}" style="flex:${n};--c:var(${c})"></i>`).join('');
+$('#stackKeys').innerHTML = ST.map(([k, n, c]) => `<span><s style="--c:var(${c})"></s>${k}<b style="margin-left:4px;color:var(--ink)">${n}</b></span>`).join('');
+$('#ramp').innerHTML = [1, 2, 3, 4].map((n) => `<i style="--c:var(--ramp${n})"></i>`).join('');
+$('#gauges').innerHTML = [[46, '--signal'], [78, '--amber'], [96, '--red']].map(([p, c]) => {
+  const r = 34, C = 2 * Math.PI * r;
+  return `<svg width="90" height="90" viewBox="0 0 90 90" role="img" aria-label="${p}%"><circle class="gauge" cx="45" cy="45" r="${r}" stroke="var(--chart-track)"/><circle class="gauge" cx="45" cy="45" r="${r}" stroke="var(${c})" stroke-dasharray="${C * p / 100} ${C}" transform="rotate(-90 45 45)"/><text x="45" y="50" text-anchor="middle" fill="var(--ink)" font-weight="650" font-size="16">${p}%</text></svg>`;
+}).join('');
+for (const b of document.querySelectorAll('.seg button')) b.addEventListener('click', () => {
+  const t = b.dataset.theme;
+  if (t === 'standard') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('omc.theme', t); } catch (e) {}
+  paint();
+});
+for (const c of document.querySelectorAll('#chips .chip')) c.addEventListener('click', () => { for (const x of document.querySelectorAll('#chips .chip')) x.classList.toggle('on', x === c); });
+paint();
+</script>
+</body>
+</html>

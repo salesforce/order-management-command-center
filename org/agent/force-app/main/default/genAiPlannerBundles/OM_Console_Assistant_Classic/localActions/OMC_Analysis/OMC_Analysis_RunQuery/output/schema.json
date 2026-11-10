@@ -1,0 +1,38 @@
+{
+  "unevaluatedProperties": false,
+  "properties": {
+    "rows": {
+      "title": "Rows",
+      "description": "The rows as a JSON array; an aggregate row names each value by its alias, else expr0, expr1 and so on",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    },
+    "rowCount": {
+      "title": "Row count",
+      "description": "How many rows are in Rows; for SELECT COUNT(), the count",
+      "lightning:type": "lightning__integerType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    },
+    "more": {
+      "title": "More",
+      "description": "True when the query matched more rows than were returned",
+      "lightning:type": "lightning__booleanType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    },
+    "error": {
+      "title": "Error",
+      "description": "Why the query was refused or failed; fix the query and run it again",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isDisplayable": false,
+      "copilotAction:isUsedByPlanner": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}

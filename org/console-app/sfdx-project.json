@@ -1,0 +1,5 @@
+{
+  "packageDirectories": [{ "path": "force-app", "default": true }],
+  "name": "om-console-app",
+  "sourceApiVersion": "68.0"
+}

@@ -1,0 +1,78 @@
+# Copyright (c) 2026, Salesforce, Inc.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# The checks CONTRIBUTING.md asks for, on every pull request and on main. No dependencies to install: the console and its
+# tests run on Node alone. The tests include the JavaScript ↔ Apex sync checks (app/test/apex-sync.test.mjs), which read the
+# Apex source, so no org is needed. No step reads event data (titles, branch names), so nothing untrusted reaches a shell.
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+# The workflow reads the repository and nothing else. Actions are pinned to a commit SHA (the tag in the comment), so a moved tag
+# can't change what runs; dependabot.yml proposes updates.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # A standard GitHub-hosted runner. The org maps macos-14 to a larger runner it doesn't offer, which cancels the job.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+
+      # Follow nested app/shared/tooling folders and parse every .js/.mjs as an ES module without executing it.
+      - name: Syntax
+        run: node app/tools/check-syntax.mjs
+
+      # ESLint's recommended rules, set in eslint.config.mjs, at an exact version so a new release can't fail a pull request. npx
+      # fetches ESLint for this step only; the console still has no
+      # npm dependencies.
+      - name: Lint
+        run: npx -y eslint@10.14.0 .
+
+      # Browser tests (under ui/ or importing app/tools/browser-kit.mjs) need Playwright's driver and one browser. The driver is
+      # playwright-core at the exact version in app/tools/playwright-core.version (the version internal CI fetches too), installed
+      # outside the repo, so the repo keeps no package.json and no dependencies. Nothing here resolves "latest".
+      - name: Playwright
+        run: |
+          npm install --prefix "$RUNNER_TEMP/pw" --no-package-lock --no-audit --no-fund --ignore-scripts "playwright-core@$(cat app/tools/playwright-core.version)"
+          node "$RUNNER_TEMP/pw/node_modules/playwright-core/cli.js" install --with-deps chromium
+          echo "PLAYWRIGHT=$RUNNER_TEMP/pw/node_modules/playwright-core/index.mjs" >> "$GITHUB_ENV"
+
+      # REQUIRE_UI makes a missing Playwright or browser fail the run, so a green Tests step means no browser test skipped.
+      - name: Tests
+        run: |
+          node --test --test-concurrency=2 --test-reporter=spec --test-reporter-destination=stdout \
+            --test-reporter=./app/test/support/case-reporter.mjs --test-reporter-destination="$RUNNER_TEMP/cases.json" \
+            "app/test/**/*.test.mjs"
+          node app/tools/shared/check-case-parity.mjs "$RUNNER_TEMP/cases.json"
+        env:
+          TZ: 'UTC'
+          REQUIRE_UI: '1'
+          HEADLESS: '1'
+          RECORD: '0'

@@ -1,0 +1,1171 @@
+<!doctype html>
+<!--
+  Copyright (c) 2026, Salesforce, Inc.
+  SPDX-License-Identifier: Apache-2.0
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salesforce Order Management Operations Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&display=swap" rel="stylesheet">
+<script src="geo.js"></script>
+<script src="cities.js"></script>
+<script>
+// Theme before first paint: no data-theme is Standard. Unknown values and storage errors fall back to Standard.
+(function () {
+  var t = 'standard';
+  try { var s = localStorage.getItem('omc.theme'); if (s === 'slds-light' || s === 'slds-dark') t = s; } catch (e) {}
+  if (t === 'standard') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = t;
+  window.omcTheme = function () { return t; };
+})();
+</script>
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* Colours, scale and components come from tokens.css (shared with OM Service Console); this sheet lays the console out. */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(1200px 600px at 30% -10%,var(--bg-grad) 0%,var(--bg) 60%) fixed;color:var(--ink);font-family:var(--font);font-size:var(--fs-body);line-height:var(--lh-body);font-variant-numeric:tabular-nums}
+button,select,input{font:inherit;color:inherit}
+::placeholder{color:var(--muted);opacity:1}
+/* Text on a tinted fill (an alert, a banner, a selected or flagged row) loses contrast: quiet text steps up to --ink2,
+   and links and tone text mix in --ink (--tint-ink), or they fall under 4.5:1. */
+:is(.notice,.banner,.lal,.lr.bad,.c360 tr.focus,.c360 .ocard.picked,.agent-ctx,.agent-m.me,.agent-guard,.hx-box) :is(.muted,.ls){color:var(--ink2)}
+:is(.notice,.banner,.lal,.lr.bad,.c360 tr.focus,.c360 .ocard.picked,.agent-ctx,.agent-m.me,.agent-guard,.hx-box) :is(a:not(.go),.acct,.linkbtn,button.link){color:color-mix(in srgb,var(--signal) var(--tint-ink),var(--ink))}
+:is(.notice,.banner,.lal,.lr.bad,.c360 tr.focus,.c360 .ocard.picked,.agent-ctx,.agent-m.me,.agent-guard,.hx-box) .warn{color:color-mix(in srgb,var(--amber) var(--tint-ink),var(--ink))}
+:is(.notice,.banner,.lal,.lr.bad,.c360 tr.focus,.c360 .ocard.picked,.agent-ctx,.agent-m.me,.agent-guard,.hx-box) .good{color:color-mix(in srgb,var(--green) var(--tint-ink),var(--ink))}
+:is(.notice,.banner,.lal,.lr.bad,.c360 tr.focus,.c360 .ocard.picked,.agent-ctx,.agent-m.me,.agent-guard,.hx-box) .err-inline{color:color-mix(in srgb,var(--red) var(--tint-ink),var(--ink))}
+button{cursor:pointer;border:1px solid var(--btn-line);background:var(--btn-bg);border-radius:var(--btn-radius);padding:var(--btn-pad);transition:border-color var(--dur-fast),background var(--dur-fast)}
+button:hover{border-color:var(--btn-hover-line)}
+button.primary{background:var(--btn-primary-bg);border-color:var(--btn-primary-bg);color:var(--btn-primary-ink);font-weight:var(--btn-weight)}
+:focus-visible{outline:var(--focus-ring);outline-offset:var(--focus-offset)}
+/* A container that only takes focus from script (a drawer, a dialog, a skip link's target) shows no ring of its own. */
+[tabindex="-1"]:focus-visible{outline:none}
+[tabindex="0"]:not(button):focus-visible{outline-offset:-2px}
+.skip{position:fixed;left:var(--sp-5);top:var(--sp-5);z-index:var(--z-full);padding:var(--sp-3) var(--sp-5);background:var(--panel);color:var(--ink);border:1px solid var(--line2);border-radius:var(--radius-md);transform:translateY(-300%)}
+.skip:focus{transform:none}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.muted{color:var(--muted)}
+.hide{display:none!important}
+.agent-none :is([data-ask],.agent-ask){display:none!important}
+kbd{font:var(--fw-semibold) var(--fs-2xs)/1 var(--font);border:1px solid var(--line2);border-bottom-width:2px;border-radius:var(--radius-sm);padding:var(--sp-1) var(--sp-3);color:var(--ink2)}
+
+/* Sign-in */
+.gate{min-height:100%;display:grid;place-items:center;padding:var(--sp-10)}
+.gate .card{position:relative;width:min(520px,100%);background:var(--panel);border:1px solid var(--card-line);border-radius:var(--radius-2xl);padding:var(--sp-11);box-shadow:var(--shadow-3)}
+.gate h1{font-size:var(--fs-3xl);font-stretch:85%;margin:var(--sp-7) 0 var(--sp-3)}
+.gate p{color:var(--ink2);margin:0 0 var(--sp-9)}
+.gate .opts{display:grid;gap:var(--sp-5)}
+.gate .opts button{text-align:left;padding:var(--sp-7) var(--sp-8);display:flex;justify-content:space-between;align-items:center}
+.gate .opts small{color:var(--muted)}
+.gate .custom{display:flex;gap:var(--sp-4);margin-top:var(--sp-2)}
+.gate input{flex:1;background:var(--field-bg);border:1px solid var(--field-line);border-radius:var(--field-radius);padding:var(--field-pad)}
+.gate .note{margin-top:var(--sp-9);font-size:var(--fs-md);color:var(--muted);border-top:1px solid var(--line);padding-top:var(--sp-7)}
+.gate .err{color:var(--red);margin-top:var(--sp-6)}
+.gate .wait{margin-top:var(--sp-7);color:var(--amber)}
+.mark{width:36px;height:36px;border-radius:var(--radius-lg);background:var(--brand-grad);display:grid;place-items:center;flex:none}
+
+/* Shell */
+.app{display:grid;grid-template-rows:auto auto auto 1fr;height:100%;min-height:780px}
+/* <main> is the landmark only: its children are the grid's rows, as if it weren't there. */
+.app>main{display:contents}
+.top{position:relative;z-index:var(--z-header);display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-4) var(--sp-7);padding:var(--sp-5) var(--sp-9);border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:var(--sp-5)}
+.brand h1{margin:0;font-stretch:80%;font-size:var(--fs-xl);font-weight:var(--fw-bold);letter-spacing:.01em}
+.live{display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-3) var(--sp-5) var(--sp-3) var(--sp-4);border-radius:var(--radius-pill);border:1px solid var(--line2);background:var(--panel);font-size:var(--fs-md);color:var(--ink2)}
+.live i{width:8px;height:8px;border-radius:var(--radius-round);background:var(--green);box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent);animation:pulse 2s infinite}
+.live.paused i{background:var(--amber);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 55%,transparent)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.theme-ctl{position:relative;display:inline-flex}
+.theme-btn{display:inline-flex;align-items:center;justify-content:center;padding:var(--sp-3) var(--sp-4);color:var(--ink2)}
+.theme-btn:hover,.theme-btn[aria-expanded="true"]{color:var(--ink);border-color:var(--signal)}
+.theme-menu{position:absolute;top:calc(100% + 6px);right:0;z-index:var(--z-menu);min-width:170px;display:flex;flex-direction:column;padding:var(--sp-2);background:var(--pop-bg);border:1px solid var(--pop-line);border-radius:var(--pop-radius);box-shadow:var(--pop-shadow)}
+.theme-menu button{border:0;background:transparent;text-align:left;padding:var(--sp-4) var(--sp-5) var(--sp-4) 26px;font-size:var(--fs-md);color:var(--ink2);position:relative;white-space:nowrap}
+.theme-menu button:hover,.theme-menu button:focus-visible{background:var(--raise);color:var(--ink)}
+.theme-menu button.on{color:var(--ink);font-weight:var(--fw-semibold)}
+.theme-menu button.on::before{content:"\2713";position:absolute;left:9px;color:var(--signal)}
+.gate .theme-ctl{position:absolute;top:16px;right:16px}
+.gate .theme-menu{right:0}
+.seg-ctl{display:flex;border:1px solid var(--line2);border-radius:var(--radius-lg);overflow:hidden;background:var(--panel)}
+.seg-ctl button{border:0;border-radius:0;background:transparent;padding:var(--sp-3) var(--sp-6);color:var(--ink2);font-size:var(--fs-md)}
+.seg-ctl button+button{border-left:1px solid var(--line)}
+/* A narrow window wraps the header onto a second row rather than breaking its labels. */
+.top button,.top .org>*,.brand h1{white-space:nowrap}
+.seg-ctl button.on{background:var(--raise);color:var(--ink);font-weight:var(--fw-semibold);box-shadow:inset 0 -2px 0 var(--signal)}
+.top .org .every{display:flex;align-items:center;gap:var(--sp-3)}
+.top .org .every select{margin-left:0}
+.top .scope-ctl{display:flex;align-items:center;gap:var(--sp-5)}
+.top .scope-ctl label{display:flex;align-items:center;color:var(--ink2);font-size:var(--fs-md)}
+.top .scope-ctl select{max-width:220px;text-overflow:ellipsis}
+.top .org{margin-left:auto;display:flex;gap:var(--sp-5);align-items:center;color:var(--ink2);font-size:var(--fs-md)}
+.dot{width:8px;height:8px;border-radius:var(--radius-round);background:var(--green)}
+.dot.demo{background:var(--amber)}
+
+/* Refreshing shows only a spinner in the top bar; panels keep their last data until the new data paints. */
+.spin{display:none;width:14px;height:14px;border:2px solid var(--line2);border-top-color:var(--signal);border-radius:var(--radius-round);animation:spin .8s linear infinite}
+.loading .spin{display:inline-block} .loading #updated{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.notice{margin:var(--sp-6) var(--gutter) 0;padding:var(--sp-5) var(--sp-7);border:1px solid color-mix(in srgb,var(--amber) var(--tint-line),transparent);background:color-mix(in srgb,var(--amber) var(--tint-row),transparent);border-radius:var(--radius-lg);color:var(--ink2);font-size:var(--fs-base);display:flex;gap:var(--sp-5);align-items:center}
+.notice b{color:color-mix(in srgb,var(--amber) var(--tint-ink),var(--ink))} .notice button{margin-left:auto;font-size:var(--fs-md);padding:var(--sp-2) var(--sp-5)}
+/* Load failure: its own row under the top bar, so renderNotice can't hide it. Ink text, colour only in the border and tint (red text on its tint fails 4.5:1 in Light). */
+.banner{margin:var(--sp-6) var(--gutter) 0;padding:var(--sp-5) var(--sp-7);border:1px solid color-mix(in srgb,var(--amber) var(--tint-line),transparent);background:color-mix(in srgb,var(--amber) var(--tint-alert),transparent);border-radius:var(--radius-lg);color:var(--ink);font-size:var(--fs-base);display:flex;gap:var(--sp-5);align-items:center}
+.banner.err{border-color:color-mix(in srgb,var(--red) var(--tint-line),transparent);background:color-mix(in srgb,var(--red) var(--tint-alert),transparent)}
+.banner button{margin-left:auto;font-size:var(--fs-md);padding:var(--sp-2) var(--sp-5)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--sp-6);padding:var(--sp-7) var(--sp-9) 0}
+.kpi{background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);padding:var(--sp-6) var(--sp-8);position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line2)}
+.kpi .l{color:var(--muted);font-size:var(--label-size);text-transform:uppercase;letter-spacing:var(--label-track);display:flex;gap:var(--sp-3);align-items:center}
+.kpi .v{font-size:var(--fs-kpi);font-weight:var(--fw-display);font-stretch:var(--stretch-figure);line-height:var(--lh-tight);margin-top:var(--sp-2)}
+.kpi .s{color:var(--muted);font-size:var(--fs-sm);margin-top:var(--sp-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.warn::before{background:var(--amber)} .kpi.bad::before{background:var(--red)} .kpi.agent::before{background:var(--agent)} .kpi.good::before{background:var(--signal)}
+.kpi .ic{font-size:var(--fs-2xs)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(360px,1fr);grid-template-rows:minmax(460px,1.35fr) minmax(250px,1fr);gap:var(--sp-6);padding:var(--sp-6) var(--sp-9) var(--sp-9);min-height:0}
+.zone{background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.zone>h2{font-size:var(--section-size);text-transform:uppercase;letter-spacing:var(--section-track);color:var(--ink2);margin:0;padding:var(--sp-5) var(--sp-7);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:var(--sp-5);min-height:46px}
+.zone>h2 .sub{text-transform:none;letter-spacing:0;color:var(--muted);font-weight:var(--fw-normal);font-size:var(--fs-md)}
+.zone>h2 .right{margin-left:auto;display:flex;gap:var(--sp-4);align-items:center;text-transform:none;letter-spacing:0;font-weight:var(--fw-normal)}
+.body{flex:1;overflow:auto;min-height:0}
+.empty{padding:var(--sp-10) var(--sp-7);color:var(--muted)}
+.perr{padding:var(--sp-4) var(--sp-7);color:var(--red);font-size:var(--fs-md)}
+.pcap{font-size:var(--fs-xs);color:var(--muted);margin:0 0 var(--sp-3)}
+/* Inside Salesforce the platform injects its session bar (signed-in user + Log out) fixed across the top and pads the body for it.
+   In-org mode docks it in the header where the org name is, as a small chip; nowhere else has it. */
+html body.sf-session-banner-active{padding-top:0!important}
+.org sf-session-banner{position:static!important;width:auto!important;min-height:0!important;padding:var(--sp-2) var(--sp-5)!important;border-radius:var(--radius-pill);border:1px solid var(--line2);background:var(--panel2)!important;color:var(--muted)!important;font-size:var(--fs-sm)!important;line-height:16px!important;z-index:auto!important}
+body.banner-docked #orgName,body.banner-docked #orgDot{display:none}
+
+/* Map */
+.net{display:grid;grid-template-columns:minmax(0,1fr) 210px;min-height:0;flex:1}
+.mapwrap{position:relative;min-height:0}
+.map{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+.map.panning{cursor:grabbing}
+.map.panning *{cursor:grabbing!important}
+.land,.land-glow,.inset,.flow,.pmark{vector-effect:non-scaling-stroke}
+.zoom{position:absolute;left:12px;top:10px;display:flex;flex-direction:column;z-index:3;border:1px solid var(--line2);border-radius:var(--radius-md);overflow:hidden;background:color-mix(in srgb,var(--panel) 90%,transparent)}
+.zoom button{width:28px;height:26px;border:0;background:none;color:var(--ink2);font-size:var(--fs-lg);line-height:1;padding:0}
+.zoom button+button{border-top:1px solid var(--line2)}
+.zoom button:hover:not(:disabled){background:var(--line);color:var(--ink)}
+.zone:fullscreen,.zone.maxi{border-radius:0;border:0}
+.zone.maxi{position:fixed;inset:0;z-index:50}
+.zone:fullscreen .net,.zone.maxi .net{grid-template-columns:minmax(0,1fr) 260px}
+.zoom button[aria-pressed="true"]{background:var(--line);color:var(--ink)}
+.zoom button:disabled{opacity:.35;cursor:default}
+.land{fill:var(--land);stroke:var(--land-line);stroke-width:1;stroke-linejoin:round}
+.land-glow{fill:none;stroke:var(--signal);stroke-opacity:.12;stroke-width:6;filter:blur(4px)}
+.inset{fill:none;stroke:var(--line2);stroke-dasharray:3 4}
+.bub{stroke:var(--chart-mark-line);stroke-width:2;cursor:pointer;transition:opacity var(--dur-med)}
+.bub:hover{stroke:var(--ink)}
+.bl{font-size:var(--fs-3xs);font-weight:var(--fw-bold);text-anchor:middle;pointer-events:none;fill:var(--lbl)}
+.bl.out{fill:var(--ink2);font-weight:var(--fw-semibold)}
+.flow{fill:none;stroke:var(--signal);stroke-linecap:round;transition:opacity var(--dur-med)}
+.pkt{fill:var(--signal2)}
+.node{cursor:pointer;transition:opacity var(--dur-med)}
+.node .hitc{fill:transparent}
+.node .halo{fill:var(--green);opacity:.14}
+.node .core{fill:var(--green);stroke:var(--bg);stroke-width:2}
+.node.store .core{fill:var(--signal)}
+.node.strain .core,.node.strain .halo{fill:var(--amber)}
+.node .ringbg{fill:none;stroke:var(--chip2);stroke-width:3}
+.node .ring{fill:none;stroke:var(--green);stroke-width:3;stroke-linecap:round}
+.node.strain .ring{stroke:var(--amber)}
+.node text{fill:var(--ink);font-size:var(--fs-sm);font-weight:var(--fw-semibold);paint-order:stroke;stroke:var(--bg);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.node text.cap{fill:var(--ink2);font-weight:var(--fw-normal);font-size:var(--fs-3xs)}
+.node.sel .core{stroke:var(--ink)}
+.node:focus-visible .halo{opacity:.4}
+#map .dim{opacity:.12!important}
+.tip{position:absolute;pointer-events:none;background:color-mix(in srgb,var(--pop-bg) 97%,transparent);border:1px solid var(--pop-line);border-radius:var(--pop-radius);padding:var(--sp-5) var(--sp-6);font-size:var(--fs-md);min-width:190px;max-width:280px;box-shadow:var(--shadow-2);z-index:var(--z-float)}
+.tip b,.focus b{font-size:var(--fs-body)}
+.tip .r,.focus .r{display:flex;justify-content:space-between;gap:var(--sp-7);color:var(--ink2);margin-top:var(--sp-2)}
+.tip .r span:last-child,.focus .r span:last-child{color:var(--ink);font-weight:var(--fw-semibold);white-space:nowrap}
+.tip h3,.focus h3{margin:var(--sp-4) 0 var(--sp-1);font-size:var(--fs-3xs);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:var(--fw-medium)}
+.focus{position:absolute;left:12px;bottom:12px;background:color-mix(in srgb,var(--panel) 95%,transparent);border:1px solid var(--line2);border-radius:var(--radius-lg);padding:var(--sp-5) var(--sp-6);font-size:var(--fs-md);width:260px;z-index:4}
+.focus .x{float:right;padding:0 var(--sp-3);border:0;background:none;color:var(--muted)}
+.maphint{padding:var(--sp-3) var(--sp-7);border-top:1px solid var(--line);font-size:var(--fs-xs);color:var(--muted);text-align:right}
+.legend{border-left:1px solid var(--line);overflow:auto;padding:var(--sp-5) 0;display:flex;flex-direction:column}
+.legend .row.crow{grid-template-columns:1fr 34px}
+.legend .crow .bar{margin-top:var(--sp-2)}
+.bub.approx{stroke-dasharray:3 2;stroke:var(--ink2)}
+.legend .lt{padding:0 var(--sp-7) var(--sp-3);font-size:var(--fs-2xs);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.legend .row{display:grid;grid-template-columns:28px 1fr 34px;gap:var(--sp-4);align-items:center;padding:var(--sp-2) var(--sp-7);font-size:var(--fs-md);cursor:default;border-radius:var(--radius-sm)}
+.legend .row:hover{background:var(--panel2)}
+.bar{height:var(--chart-bar);background:var(--chart-track);border-radius:var(--chart-bar-radius);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:0 var(--chart-bar-radius) var(--chart-bar-radius) 0}
+.keyset{margin-top:auto;padding:var(--sp-5) var(--sp-7) var(--sp-1);border-top:1px solid var(--line);display:grid;gap:var(--sp-3);font-size:var(--fs-sm);color:var(--ink2)}
+.keyset div{display:flex;align-items:center;gap:var(--sp-4)}
+.chips{display:flex;gap:var(--sp-3)}
+.chip{font-size:var(--chip-size);padding:var(--chip-pad);border-radius:var(--tag-radius);border:1px solid var(--chip-line);background:transparent;color:var(--tag-ink)}
+.chip.on{background:var(--btn-primary-bg);border-color:var(--btn-primary-bg);color:var(--btn-primary-ink);font-weight:var(--fw-semibold)}
+.tog{display:flex;align-items:center;gap:var(--sp-3);font-size:var(--fs-md);color:var(--ink2);cursor:pointer}
+.tog input{accent-color:var(--signal)}
+/* Product search + overlay */
+.psearch{position:absolute;right:12px;top:10px;width:270px;z-index:6}
+.psearch input{width:100%;background:color-mix(in srgb,var(--bg) 92%,transparent);border:1px solid var(--line2);border-radius:var(--radius-md);padding:var(--sp-3) var(--sp-5);font-size:var(--fs-md)}
+.psearch input:focus{border-color:var(--signal)}
+.pres{margin-top:var(--sp-2);background:color-mix(in srgb,var(--panel) 98%,transparent);border:1px solid var(--line2);border-radius:var(--radius-lg);overflow:auto;max-height:300px;box-shadow:var(--shadow-2)}
+.pres button{display:block;width:100%;text-align:left;border:0;border-radius:0;background:transparent;padding:var(--sp-4) var(--sp-5);font-size:var(--fs-md)}
+.pres button+button{border-top:1px solid var(--line)}
+.pres button:hover,.pres button.on{background:var(--raise)}
+.pres b{font-weight:var(--fw-semibold);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pres small{color:var(--muted)}
+.pres .empty{padding:var(--sp-5) var(--sp-5)}
+.pmark{cursor:default}
+/* A location out of focus (or without the product) turns grey rather than fading: it's still a button, and its label still reads. */
+#map .node.faint,#map .node.dim{opacity:1!important;filter:grayscale(1)}
+#map .node.faint text,#map .node.dim text{fill:var(--muted)}
+.bl.ink{fill:var(--lbl-ink)}
+.legend .row.w{grid-template-columns:28px 1fr 48px}
+.legend .lrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--sp-1) var(--sp-4);padding:var(--sp-2) var(--sp-7);font-size:var(--fs-md);border-radius:var(--radius-sm)}
+.legend .lrow:hover{background:var(--panel2)}
+.legend .lrow>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.legend .lrow .bar{grid-column:1/-1}
+.legend .pnote{padding:var(--sp-1) var(--sp-7) var(--sp-3);font-size:var(--fs-xs);color:var(--muted)}
+.legend .pnote b{color:var(--ink2);font-weight:var(--fw-semibold)}
+.legend .pclear{margin:var(--sp-2) var(--sp-7) var(--sp-4);font-size:var(--fs-sm);padding:var(--sp-2) var(--sp-5)}
+
+/* Lists / tables */
+.tabs{display:flex;gap:var(--sp-3);padding:var(--sp-4) var(--sp-7);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.item{display:grid;grid-template-columns:4px auto 1fr auto;gap:var(--sp-5);align-items:start;padding:var(--sp-5) var(--sp-7) var(--sp-5) 0;border-bottom:1px solid var(--line);cursor:pointer}
+.item:hover{background:var(--panel2)}
+.item .edge{align-self:stretch;border-radius:0 var(--radius-xs) var(--radius-xs) 0;background:var(--line2)}
+.item .edge.High,.item .edge.Critical{background:var(--red)} .item .edge.Medium{background:var(--amber)}
+.item .t{font-weight:var(--fw-semibold)}
+.item .s{color:var(--ink2);font-size:var(--fs-md);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.sev{font-size:var(--tag-square-size);font-weight:var(--tag-square-weight);padding:var(--tag-square-pad);border-radius:var(--tag-square-radius);background:var(--tag-square-bg);color:var(--tag-ink);white-space:nowrap}
+.sev.High,.sev.Critical{background:color-mix(in srgb,var(--red) var(--tint-fill),transparent);color:color-mix(in srgb,var(--red) var(--tint-ink),var(--ink))}
+.sev.Medium{background:color-mix(in srgb,var(--amber) var(--tint-fill),transparent);color:color-mix(in srgb,var(--amber) var(--tint-ink),var(--ink))}
+.pill{font-size:var(--tag-size);padding:var(--tag-pad);border-radius:var(--tag-radius);background:var(--tag-bg);color:var(--tag-ink);white-space:nowrap;display:inline-flex;align-items:center;gap:var(--sp-3)}
+.pill s{width:7px;height:7px;border-radius:var(--radius-round);text-decoration:none;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:var(--fs-base)}
+th{position:sticky;top:0;background:var(--card-bg);text-align:left;font-weight:var(--th-weight);color:var(--th-ink);font-size:var(--th-size);text-transform:uppercase;letter-spacing:var(--th-track);padding:var(--cell-pad);border-bottom:1px solid var(--row-line);z-index:var(--z-raised)}
+td{padding:var(--cell-pad);border-bottom:1px solid var(--row-line);white-space:nowrap}
+tbody tr[data-id]{cursor:pointer} .mono{font-family:var(--font-mono);font-size:var(--fs-xs)} tbody tr:hover{background:var(--row-hover)}
+tr.fresh{animation:fresh 2.5s ease-out}
+@keyframes fresh{from{background:color-mix(in srgb,var(--signal) var(--tint-fill),transparent)}to{background:transparent}}
+.num{text-align:right}
+
+/* Status board */
+.sb{padding:var(--sp-7);display:grid;gap:var(--sp-9)}
+.sb h3{margin:0 0 var(--sp-4);font-size:var(--fs-md);font-weight:var(--fw-medium);color:var(--ink2);display:flex;justify-content:space-between}
+.sb h3 b{color:var(--ink)}
+.stack{display:flex;gap:var(--sp-1);height:22px}
+.stack i{display:block;height:100%;min-width:4px;cursor:default}
+.stack i:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm)} .stack i:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0} .stack i:only-child{border-radius:var(--radius-sm)}
+.keys{display:flex;flex-wrap:wrap;gap:var(--sp-3) var(--sp-7);margin-top:var(--sp-5);font-size:var(--fs-md);color:var(--ink2)}
+.keys b{color:var(--ink);font-weight:var(--fw-semibold);margin-left:var(--sp-2)}
+.keys s{display:inline-block;width:var(--chart-key);height:var(--chart-key);border-radius:var(--chart-key-radius);margin-right:var(--sp-3);text-decoration:none}
+
+/* Drawer */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:var(--z-scrim)}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(580px,100%);background:var(--panel);border-left:1px solid var(--line2);overflow:auto;padding:var(--sp-9) var(--sp-10);z-index:var(--z-drawer);box-shadow:-20px 0 60px color-mix(in srgb,var(--shade) var(--tint-line),transparent);animation:slide var(--dur-med) ease-out}
+@keyframes slide{from{transform:translateX(30px);opacity:0}}
+.drawer h3{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:var(--sp-10) 0 var(--sp-4)}
+.drawer .hd{display:flex;justify-content:space-between;gap:var(--sp-6);align-items:flex-start}
+.drawer .hd b{font-size:var(--fs-3xl);font-stretch:85%}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-2);margin-top:var(--sp-8)}
+.steps div{font-size:var(--fs-xs);color:var(--muted);padding-top:var(--sp-4);border-top:3px solid var(--line2)}
+.steps div.done{color:var(--ink2);border-color:var(--signal)}
+.steps div.cur{color:var(--ink);font-weight:var(--fw-semibold);border-color:var(--signal2)}
+.steps.cancel div.cur{border-color:var(--red)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5);margin-top:var(--sp-8)}
+.facts div{background:var(--panel2);border-radius:var(--radius-md);padding:var(--sp-5)}
+.facts span{display:block;color:var(--muted);font-size:var(--fs-xs)}
+.drawer a{color:var(--signal)}
+.drawer tr.bpart td:first-child{padding-left:var(--sp-10)}
+.drawer table td{white-space:normal}
+.linkbtn{font-size:var(--fs-sm);padding:var(--sp-2) var(--sp-5)}
+.acct{background:none;border:0;padding:0;color:var(--signal);font:inherit;cursor:pointer;text-align:left}
+.acct:hover{text-decoration:underline}
+.badges{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin-top:var(--sp-5)}
+.badge{font-size:var(--tag-size);font-weight:var(--fw-semibold);padding:var(--tag-pad);border-radius:var(--tag-radius);background:var(--panel2);border:1px solid var(--badge-line);color:var(--tag-ink)}
+.badge.good{color:var(--green);border-color:color-mix(in srgb,var(--green) var(--tint-line),transparent)}
+.badge.warn{color:var(--amber);border-color:color-mix(in srgb,var(--amber) var(--tint-line),transparent)}
+.rankbar{height:4px;margin-top:var(--sp-3);border-radius:var(--radius-xs);background:var(--line2);overflow:hidden}
+.rankbar i{display:block;height:100%;border-radius:var(--radius-xs);background:var(--signal)}
+.rankbar.warn i{background:var(--amber)}
+
+/* Order history: Activity feed and Timeline board */
+.drawer{transition:width var(--dur-med) ease}
+.drawer.wide{width:min(1060px,100%)}
+.otabs{display:inline-flex;margin-top:var(--sp-8)}
+.hx-empty{padding:28px 0}
+.hx-bar{margin-top:var(--sp-9);padding-bottom:var(--sp-7);border-bottom:1px solid var(--line)}
+.hx-span{margin:0 0 var(--sp-5);color:var(--ink2);font-size:var(--fs-base)}
+.hx-span b{color:var(--ink);font-weight:var(--fw-semibold)}
+.hx-pf{display:flex;flex-wrap:wrap;gap:var(--sp-3)}
+.hx-pf button{display:inline-flex;align-items:center;gap:var(--sp-4);border-radius:var(--radius-pill);padding:var(--sp-2) var(--sp-6) var(--sp-2) var(--sp-2);font-size:var(--fs-md);color:var(--ink2)}
+.hx-pf button:first-child{padding-left:var(--sp-6)}
+.hx-pf button.on{border-color:var(--signal);color:var(--ink);background:color-mix(in srgb,var(--signal) var(--tint-on),var(--panel2))}
+.hx-pf button.gone{text-decoration:line-through;text-decoration-color:var(--muted)}
+.hx-ini{display:inline-flex;align-items:center;justify-content:center;gap:var(--sp-1);min-width:24px;height:22px;padding:0 var(--sp-3);border-radius:var(--radius-pill);background:var(--raise);border:1px solid var(--line2);font-size:var(--fs-3xs);font-weight:var(--fw-semibold);letter-spacing:.03em;color:var(--ink);box-sizing:border-box}
+.hx-ini small{font-size:var(--fs-3xs);font-weight:var(--fw-medium);color:var(--muted)}
+.hx-ini.on,.hx-chip.on .hx-ini{background:var(--signal);border-color:var(--signal);color:var(--bg)}
+.hx-ini.on small{color:inherit}
+/* Activity */
+.hx-day header{position:sticky;top:-20px;z-index:2;display:flex;justify-content:space-between;align-items:baseline;padding:var(--sp-8) 0 var(--sp-4);background:var(--panel);border-bottom:1px solid var(--line)}
+.hx-day header b{font-size:var(--fs-body);font-weight:var(--fw-semibold)}
+.hx-day header span{font-size:var(--fs-sm);color:var(--muted)}
+.hx-day ol{list-style:none;margin:var(--sp-2) 0 0;padding:0;position:relative}
+.hx-day ol::before{content:'';position:absolute;left:85px;top:18px;bottom:18px;width:2px;border-radius:var(--radius-xs);background:var(--line2)}
+.hx-ev{display:grid;grid-template-columns:62px 14px 1fr auto;gap:0 var(--sp-6);align-items:start;padding:var(--sp-6) var(--sp-4);border-radius:var(--radius-lg);cursor:pointer}
+.hx-ev:hover,.hx-ev:focus-visible{background:var(--panel2)}
+.hx-ev:focus-visible{outline:var(--focus-ring);outline-offset:-2px}
+.hx-ev time{font-size:var(--fs-sm);color:var(--muted);text-align:right;padding-top:var(--sp-1);font-variant-numeric:tabular-nums}
+.hx-dot{position:relative;z-index:1;width:12px;height:12px;margin-top:var(--sp-2);border-radius:var(--radius-round);background:var(--c);box-shadow:0 0 0 4px var(--panel)}
+.hx-ev:hover .hx-dot,.hx-ev:focus-visible .hx-dot{box-shadow:0 0 0 4px var(--panel2)}
+.hx-dot.open,.hx-dot.warn{background:var(--panel);border:2.5px solid var(--c);box-sizing:border-box}
+.hx-dot.fail{background:var(--panel);border:2.5px solid var(--st-fail);box-sizing:border-box}
+.hx-t{font-weight:var(--fw-medium);color:var(--ink)}
+.hx-ref{font-weight:var(--fw-normal);color:var(--muted);margin-left:var(--sp-2);font-size:var(--fs-md)}
+.hx-sub{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-3) var(--sp-5);margin-top:var(--sp-3);font-size:var(--fs-sm);color:var(--ink2)}
+.hx-kind{color:var(--c);font-weight:var(--fw-semibold)}
+.hx-open{color:var(--amber)}
+.hx-chips{display:flex;flex-wrap:wrap;gap:var(--sp-3);margin-top:var(--sp-4)}
+.hx-chip{display:inline-flex;align-items:center;gap:var(--sp-3);padding:var(--sp-1) var(--sp-5) var(--sp-1) var(--sp-1);border-radius:var(--radius-pill);background:var(--panel2);border:1px solid var(--line);font-size:var(--fs-sm);color:var(--ink2)}
+.hx-ev:hover .hx-chip{background:var(--panel)}
+.hx-amt{font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums;padding-top:1px;white-space:nowrap}
+.hx-amt.neg{color:var(--red)}
+.hx-b3 em.neg{color:color-mix(in srgb,var(--red) var(--tint-ink),var(--ink))}
+/* Timeline */
+.hx-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--sp-5);margin:var(--sp-8) 0 var(--sp-6)}
+.hx-tools .muted{font-size:var(--fs-sm)}
+.hx-tl{border:1px solid var(--line2);border-radius:var(--r);background:var(--panel2);overflow:hidden}
+.hx-axis,.hx-lane{display:grid;grid-template-columns:112px 1fr}
+.hx-axis{height:30px;border-bottom:1px solid var(--line2);background:var(--panel)}
+.hx-axis .hx-track span{position:absolute;top:8px;transform:translateX(-50%);font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.hx-axis .hx-track{overflow:hidden}
+.hx-lane+.hx-lane{border-top:1px solid var(--line)}
+.hx-ln{display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-7) var(--sp-6);font-size:var(--fs-md);font-weight:var(--fw-medium);color:var(--ink2);border-right:1px solid var(--line);background:var(--panel)}
+.hx-ln s{width:8px;height:8px;border-radius:var(--radius-xs);background:var(--c);flex:none}
+.hx-ln span{margin-left:auto;font-size:var(--fs-xs);color:var(--muted);font-weight:var(--fw-normal)}
+.hx-track{position:relative;margin:0 var(--sp-7)}
+.hx-gl{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.hx-now{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed var(--signal);opacity:.8}
+.hx-box{position:absolute;height:66px;padding:var(--sp-5) var(--sp-5) var(--sp-4);border-radius:var(--radius-lg);background:color-mix(in srgb,var(--c) var(--tint-on),var(--panel));border:1px solid color-mix(in srgb,var(--c) var(--tint-line),transparent);
+  display:flex;flex-direction:column;justify-content:space-between;gap:var(--sp-1);overflow:hidden;text-align:left;font-size:var(--fs-sm);color:var(--ink);transition:opacity var(--dur-fast),transform var(--dur-fast),border-color var(--dur-fast);box-sizing:border-box}
+.hx-box:hover{border-color:var(--c);background:color-mix(in srgb,var(--c) var(--tint-fill),var(--panel))}
+.hx-box:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.hx-box.fail{border-style:dashed;border-color:color-mix(in srgb,var(--st-fail) 70%,transparent);background:color-mix(in srgb,var(--st-fail) var(--tint-row),var(--panel))}
+.hx-box.point{border-left:3px solid var(--c)}
+.hx-dur{position:absolute;top:0;height:3px;background:var(--c);border-radius:0 0 var(--radius-xs) var(--radius-xs)}
+.hx-box.point .hx-dur{display:none}
+.hx-box.fail .hx-dur{background:var(--st-fail)}
+.hx-box.live .hx-dur{background:repeating-linear-gradient(90deg,var(--c) 0 7px,transparent 7px 11px)}
+.hx-b1,.hx-b3{display:flex;align-items:center;gap:var(--sp-3);min-width:0}
+.hx-b1 b{font-weight:var(--fw-semibold);white-space:nowrap}
+.hx-st{display:inline-flex;align-items:center;gap:var(--sp-2);margin-left:auto;font-size:var(--fs-2xs);color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx-st s{width:6px;height:6px;border-radius:var(--radius-round);flex:none}
+.hx-b2{flex:none;line-height:1.25;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx-b3 .hx-ini{height:18px;min-width:20px;font-size:var(--fs-3xs)}
+.hx-b3 em{margin-left:auto;font-style:normal;font-weight:var(--fw-semibold);font-variant-numeric:tabular-nums}
+/* An out-of-focus box recedes by losing its colour, not its text: it stays readable (4.5:1) and clickable. */
+.hx-box.dim,.hx-tl.picking .hx-box:not(.sel):not(.rel){filter:grayscale(1);background:var(--panel);border-color:var(--line)}
+.hx-box.dim *,.hx-tl.picking .hx-box:not(.sel):not(.rel) *{color:var(--muted)}
+.hx-box.sel{outline:2px solid var(--c);outline-offset:2px;z-index:1}
+.hx-box.rel{border-color:var(--c);border-width:1.5px}
+.hx-det{margin-top:var(--sp-7);padding:var(--sp-8) var(--sp-9);border-radius:var(--r);background:var(--panel2);border:1px solid var(--line2);border-top:3px solid var(--c);animation:slide var(--dur-fast) ease-out}
+.hx-dh{display:flex;justify-content:space-between;gap:var(--sp-6);align-items:flex-start}
+.hx-dh>div:first-child{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sp-2) var(--sp-5)}
+.hx-dh>div:first-child>.muted{width:100%;font-size:var(--fs-sm);color:var(--c);font-weight:var(--fw-semibold)}
+.hx-dh b{font-size:var(--fs-xl);font-stretch:85%}
+.hx-dt{width:100%;color:var(--ink2)}
+.hx-da{display:flex;gap:var(--sp-3)}
+.hx-det .facts{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.hx-det .facts div{background:var(--panel)}
+.hx-det h3{margin-top:var(--sp-8)}
+.hx-det td .hx-ini{margin-right:var(--sp-3)}
+.hx-rel{display:flex;flex-wrap:wrap;gap:var(--sp-3)}
+.hx-rel button{display:inline-flex;align-items:center;gap:var(--sp-4);font-size:var(--fs-md);color:var(--ink2);background:var(--panel)}
+.hx-rel button b{color:var(--ink);font-weight:var(--fw-semibold)}
+.hx-rel button s{width:8px;height:8px;border-radius:var(--radius-xs);background:var(--c)}
+.hx-rel button:hover{border-color:var(--c)}
+@media (max-width:700px){.hx-axis,.hx-lane{grid-template-columns:76px 1fr}.hx-ln{padding:var(--sp-6) var(--sp-4)}.hx-ev{grid-template-columns:52px 14px 1fr}.hx-amt{grid-column:3}.hx-day ol::before{left:73px}}
+@media (prefers-reduced-motion:reduce){.drawer,.hx-box{transition:none}.hx-det,.live i{animation:none}}
+
+.kpis{grid-template-columns:repeat(7,minmax(0,1fr))}
+.kpi .d{font-size:var(--fs-sm);margin-top:var(--sp-1);color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .d b{font-weight:var(--fw-semibold);color:var(--ink)}
+
+/* Dashboard */
+.app.dashmode{grid-template-rows:auto 1fr}
+.app.dashmode>main>.notice,.app.dashmode>main>.kpis,.app.dashmode>main>.grid{display:none!important}
+.app.servicemode{grid-template-rows:auto 1fr}
+.app.servicemode>main>.notice,.app.servicemode>main>.kpis,.app.servicemode>main>.grid{display:none!important}
+.svc{display:grid;grid-template-columns:380px minmax(0,1fr);gap:var(--sp-6);padding:var(--sp-6) var(--sp-9) var(--sp-9);min-height:0}
+.qrow.sel{background:var(--panel2);box-shadow:inset 3px 0 0 var(--signal)}
+.item .w{text-align:right;font-size:var(--fs-sm);color:var(--muted);white-space:nowrap}
+.srch{position:relative;display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-5) var(--sp-7);border-bottom:1px solid var(--line)}
+.srch input{flex:1;background:var(--panel2);border:1px solid var(--line2);border-radius:var(--radius-md);color:var(--ink);padding:var(--sp-4) var(--sp-5);font:inherit}
+.svcres{position:absolute;left:14px;right:14px;top:calc(100% - 4px);z-index:var(--z-float);background:var(--pop-bg);border:1px solid var(--pop-line);border-radius:var(--radius-md);max-height:360px;overflow:auto;box-shadow:var(--pop-shadow)}
+.svcres button{display:flex;gap:var(--sp-5);width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid var(--line);color:var(--ink);padding:var(--sp-4) var(--sp-6);cursor:pointer}
+.svcres button.on,.svcres button:hover{background:var(--panel2)}
+.svcres .right{margin-left:auto;color:var(--muted);font-size:var(--fs-sm)}
+.c360{padding:0 var(--sp-9) var(--sp-9)}
+.c360 td{white-space:normal}
+.c360 h3{font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:var(--sp-9) 0 var(--sp-3)}
+.chd{display:flex;flex-wrap:wrap;gap:var(--sp-4) var(--sp-6);align-items:center;padding:var(--sp-7) 0 var(--sp-2)}
+.chd h2{font-size:var(--fs-2xl);margin:0}
+.c360 tr.focus td{background:color-mix(in srgb,var(--amber) var(--tint-row),transparent)}
+.c360 .fo{padding-left:var(--sp-9);font-size:var(--fs-md);color:var(--ink2)}
+.c360 .ocard{border:1px solid var(--line);border-radius:var(--radius-lg);padding:var(--sp-5) var(--sp-6);margin:var(--sp-4) 0}
+.c360 .ocard.picked{border-color:color-mix(in srgb,var(--amber) 55%,transparent);background:color-mix(in srgb,var(--amber) var(--tint-row),transparent)}
+.c360 .ohd{display:flex;align-items:center;gap:var(--sp-4);flex-wrap:wrap}
+.c360 .steps.slim{margin-top:var(--sp-4)}
+.c360 .steps.slim div{font-size:var(--fs-3xs);padding-top:var(--sp-2);border-top-width:2px}
+.c360 .oex{display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;margin-top:var(--sp-4);font-size:var(--fs-sm)}
+.c360 .oex .sev{border:0;cursor:pointer}
+.c360 .ocols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--sp-8);margin-top:var(--sp-5)}
+.c360 .ocols h4{margin:0 0 var(--sp-2);font-size:var(--fs-3xs);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:var(--fw-medium)}
+.c360 table.lines td{padding:var(--sp-2) var(--sp-3);font-size:var(--fs-md);vertical-align:top}
+.c360 table.lines .muted{font-size:var(--fs-xs)}
+.c360 .fob{padding:var(--sp-4) var(--sp-5);border-radius:var(--radius-md);background:var(--panel2);border:1px solid var(--line);margin-bottom:var(--sp-3);cursor:pointer;font-size:var(--fs-md)}
+.c360 .fob:hover{border-color:var(--line2)}
+.c360 .fob .fitems{font-size:var(--fs-xs);margin-top:var(--sp-1)}
+.c360 .shp{margin-top:var(--sp-2);font-size:var(--fs-sm)}
+.c360 .agrp{margin:var(--sp-3) 0 var(--sp-5);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.dash{overflow:auto;min-height:0;padding:0 0 var(--sp-10)}
+.dhead{display:flex;align-items:flex-end;gap:var(--sp-7);padding:var(--sp-8) var(--sp-9) 0}
+.dhead h1{margin:0;font-size:var(--fs-4xl);font-stretch:82%;font-weight:var(--fw-display)}
+.dhead .sub{color:var(--muted);font-size:var(--fs-md)}
+.dhead .right{margin-left:auto;display:flex;gap:var(--sp-4)}
+.dash .kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+.dgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-6);padding:var(--sp-6) var(--sp-9) 0}
+.dgrid .span2{grid-column:span 2} .dgrid .span3{grid-column:1/-1}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:var(--sp-4);margin-bottom:var(--sp-7)}
+.mini>div{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-md);padding:var(--sp-4) var(--sp-5);min-width:0}
+.mini span{display:block;font-size:var(--fs-3xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini b{display:block;font-size:var(--fs-3xl);font-weight:var(--fw-display);font-stretch:80%;line-height:1.2;margin-top:var(--sp-1)}
+.mini small{display:block;color:var(--muted);font-size:var(--fs-xs);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--sp-9)}
+.dh{margin:var(--sp-7) 0 var(--sp-4);font-size:var(--fs-md);font-weight:var(--fw-medium);color:var(--ink2);display:flex;justify-content:space-between}
+.dh:first-child{margin-top:0} .dh b{color:var(--ink);font-weight:var(--fw-semibold)}
+.score th{position:static;padding:var(--sp-3) var(--sp-5)} .score td{padding:var(--sp-4) var(--sp-5)} .score td small{display:inline-block;width:40px;text-align:right}
+.rt{display:inline-block;width:44px;height:6px;border-radius:var(--radius-xs);background:var(--line);margin-left:var(--sp-4);vertical-align:middle;overflow:hidden}
+.rt i{display:block;height:100%;border-radius:var(--radius-xs)}
+.dgrid .zone{min-height:250px}
+.dtabs{display:flex;gap:var(--sp-1);margin:var(--sp-7) var(--sp-9) 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.dtabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:var(--sp-4) var(--sp-7) var(--sp-5);color:var(--muted);font-weight:var(--fw-medium);white-space:nowrap;margin-bottom:-1px}
+.dtabs button:hover{color:var(--ink);border-color:var(--line2)}
+.dtabs button.on{color:var(--ink);border-bottom-color:var(--signal)}
+.dtabs small{margin-left:var(--sp-4);color:var(--muted);font-weight:var(--fw-normal)}
+.dgrid.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.acctrank td:first-child{color:var(--muted);width:22px}
+.acctrank td b{font-weight:var(--fw-semibold)}
+.sect{grid-column:1/-1;display:flex;align-items:baseline;gap:var(--sp-5);margin:var(--sp-5) 0 -2px;font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.08em;color:var(--ink2)}
+.sect span{text-transform:none;letter-spacing:0;color:var(--muted);font-size:var(--fs-md)}
+.dbody{padding:var(--sp-6) var(--sp-7) var(--sp-7);flex:1;min-height:0}
+.src{font-size:var(--fs-xs);color:var(--muted);text-transform:none;letter-spacing:0;font-weight:var(--fw-normal);font-family:var(--font-mono)}
+.chart{width:100%;display:block;overflow:visible}
+.chart .grid-l{stroke:var(--chart-grid);stroke-width:1}
+.chart .ax{fill:var(--chart-axis);font-size:var(--chart-axis-size)}
+.chart .hit{fill:transparent;cursor:default}
+.chart .hit:hover,.chart .hit.at{fill:var(--chart-hover)}
+.chart .col{transition:opacity var(--dur-fast)}
+.hb{display:grid;gap:var(--sp-4)}
+.hb .row{display:grid;grid-template-columns:minmax(90px,36%) 1fr minmax(74px,auto);gap:var(--sp-5);align-items:center;font-size:var(--fs-md);border-radius:var(--radius-sm);padding:var(--sp-1) var(--sp-2);margin:0 -4px}
+.hb .row:hover{background:var(--panel2)}
+.hb .lab{color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb .val{text-align:right;color:var(--ink);font-weight:var(--fw-semibold);white-space:nowrap}
+.hb .val small{color:var(--muted);font-weight:var(--fw-normal);margin-left:var(--sp-2)}
+.hb .bar{height:10px;border-radius:0}
+.hb .bar i{border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.note{font-size:var(--fs-sm);color:var(--muted);margin-top:var(--sp-5)}
+.dtip{position:fixed;z-index:30}
+.modal{position:fixed;inset:6% 8%;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius-2xl);z-index:11;display:flex;flex-direction:column;box-shadow:0 30px 80px color-mix(in srgb,var(--shade) var(--tint-line),transparent);animation:slide var(--dur-med) ease-out}
+.modal .mh{display:flex;align-items:center;gap:var(--sp-6);padding:var(--sp-8) var(--sp-9);border-bottom:1px solid var(--line)}
+.modal .mh b{font-size:var(--fs-xl);font-stretch:85%}
+.modal .mb{overflow:auto;padding:0 0 var(--sp-5)}
+.modal td{white-space:normal;vertical-align:top}
+.modal code{font:var(--fs-sm)/1.5 var(--font-mono);color:var(--signal2);word-break:break-word}
+
+/* Agentforce: the launcher stays bottom right, the panel above it, both over any open drawer and its scrim. In a frame
+   taller than the screen (an Order Management tab), bottom right is the bottom of what's on screen (--view-gap, --view-h:
+   followView() in agent-panel.js, which sets them on the page in a frame). */
+:root{--view-gap:0px;--view-h:100vh}
+.agent-btn{position:fixed;right:20px;bottom:calc(20px + var(--view-gap));z-index:var(--z-agent);width:64px;height:64px;padding:var(--sp-2);border-radius:var(--radius-round);border:1px solid var(--line2);perspective:220px;background:radial-gradient(circle at 32% 26%,color-mix(in srgb,var(--ink) var(--tint-fill),var(--panel)),var(--panel) 52%,color-mix(in srgb,var(--shade) 35%,var(--panel)));box-shadow:0 8px 20px color-mix(in srgb,var(--shade) var(--tint-line),transparent),inset 0 -6px 12px color-mix(in srgb,var(--shade) var(--tint-line),transparent),inset 0 3px 6px color-mix(in srgb,var(--ink) var(--tint-on),transparent);cursor:pointer}
+.agent-btn.has3d img,.agent-btn.has3d::before{display:none}
+.agent-btn:hover,.agent-btn[aria-expanded="true"]{border-color:var(--agent)}
+.agent-btn{display:grid;place-items:center;color:var(--agent)}
+.agent-icon{width:32px;height:32px;display:block;flex:none;color:var(--agent)}
+.agent-btn.off .agent-icon{color:var(--muted)}
+.agent-btn.thinking::after{content:"";position:absolute;inset:-4px;border-radius:var(--radius-round);border:2px solid var(--agent);animation:agentPulse 1.4s ease-out infinite}
+.agent-badge{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:var(--radius-round);background:var(--agent);border:2px solid var(--panel);animation:agentPulse2 1.6s ease-in-out infinite}
+.agent-panel{position:fixed;right:20px;bottom:calc(96px + var(--view-gap));z-index:var(--z-agent);width:min(400px,calc(100vw - 40px));max-height:min(80vh,calc(var(--view-h) - 116px));display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line2);border-radius:var(--r);box-shadow:0 12px 40px color-mix(in srgb,var(--shade) var(--tint-line),transparent);overflow:hidden;transform-origin:100% 100%;animation:agentIn var(--dur-med) var(--ease-pop)}
+.drawer{padding-bottom:100px}
+.agent-panel header{display:flex;align-items:center;gap:var(--sp-4);padding:var(--sp-5) var(--sp-6);border-bottom:1px solid var(--line)}
+.agent-panel header b{flex:1;color:var(--ink);font-size:var(--fs-body)}
+.agent-x{background:transparent;border:0;color:var(--ink2);font-size:var(--fs-2xl);line-height:1;padding:var(--sp-1) var(--sp-3);cursor:pointer}
+.agent-ctx{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2) var(--sp-4);padding:var(--sp-4) var(--sp-6);font-size:var(--fs-md);color:var(--ink2);border-bottom:1px solid var(--line);border-left:3px solid var(--agent);background:color-mix(in srgb,var(--agent) var(--tint-row),var(--panel))}
+.agent-ctx:empty{display:none}
+.agent-ctx>*{max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.agent-ctx .agent-about{flex-basis:100%;display:flex;align-items:baseline;gap:var(--sp-4)}
+.agent-ctx .agent-where{flex:none;font-size:var(--label-size);letter-spacing:var(--label-track);text-transform:uppercase;font-weight:var(--fw-bold);color:var(--agent)}
+.agent-ctx .agent-who{min-width:0;overflow:hidden;text-overflow:ellipsis;color:var(--ink);font-size:var(--fs-md);font-weight:var(--fw-semibold)}
+.agent-ctx>b{color:var(--ink);font-size:var(--fs-body);font-weight:var(--fw-semibold)}
+.agent-ctx>span{padding:var(--tag-pad);border-radius:var(--tag-radius);background:var(--tag-bg);color:var(--tag-ink);font-size:var(--tag-size)}
+.agent-msgs{flex:1;overflow:auto;padding:var(--sp-6);display:flex;flex-direction:column;gap:var(--sp-5);min-height:120px}
+.agent-m{max-width:88%;padding:var(--sp-4) var(--sp-6);border-radius:var(--radius-lg);font-size:var(--fs-base);line-height:1.45;color:var(--ink)}
+.agent-m.me{align-self:flex-end;background:color-mix(in srgb,var(--agent) var(--tint-fill),var(--panel));white-space:pre-wrap}
+.agent-m.bot{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}
+.agent-m p{margin:0 0 var(--sp-3)} .agent-m p:last-child{margin:0} .agent-m ul{margin:var(--sp-2) 0;padding-left:var(--sp-9)}
+.agent-rec{background:none;border:0;padding:0;color:var(--signal);font:inherit;text-decoration:underline;cursor:pointer}
+.agent-acts{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-3)} .agent-acts span{font-size:var(--fs-2xs);padding:1px var(--sp-4);border-radius:var(--radius-pill);border:1px solid var(--line2);color:var(--ink2)}
+.agent-guard{margin:-2px 0 var(--sp-4);padding:var(--sp-3) var(--sp-4);border-radius:var(--radius-sm);border:1px solid var(--amber);background:color-mix(in srgb,var(--amber) var(--tint-on),transparent);color:var(--ink);font-size:var(--fs-sm)}
+.agent-err{padding:var(--sp-4) var(--sp-6);border-radius:var(--radius-md);border:1px solid var(--line2);color:var(--ink2);font-size:var(--fs-md)}
+.agent-fail{margin-top:var(--sp-3);font-size:var(--fs-sm);color:var(--red);white-space:normal}
+.agent-hi{color:var(--muted);font-size:var(--fs-md)}
+.agent-m.typing{display:flex;gap:var(--sp-2)} .agent-m.typing i{width:6px;height:6px;border-radius:var(--radius-round);background:var(--agent);animation:agentDot 1s ease-in-out infinite} .agent-m.typing i:nth-child(2){animation-delay:.15s} .agent-m.typing i:nth-child(3){animation-delay:.3s}
+.agent-prompts{display:flex;flex-wrap:wrap;gap:var(--sp-3);padding:0 var(--sp-6) var(--sp-4)}
+.agent-in{display:flex;gap:var(--sp-4);padding:var(--sp-5) var(--sp-6);border-top:1px solid var(--line)}
+.agent-in textarea{flex:1;resize:none;font:inherit;font-size:var(--fs-base);padding:var(--sp-4) var(--sp-5);border-radius:var(--field-radius);border:1px solid var(--field-line);background:var(--field-bg);color:var(--ink)}
+.agent-in textarea:focus{outline:2px solid var(--agent);outline-offset:-1px}
+@keyframes agentPulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+@keyframes agentIn{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes agentPulse{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(1.25)}}
+@keyframes agentDot{0%,100%{opacity:.3}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.agent-btn.thinking::after,.agent-badge,.agent-panel,.agent-m.typing i{animation:none!important}}
+@media (max-width:1250px){.kpis,.dash .kpis{grid-template-columns:repeat(3,1fr)}.dgrid,.dgrid.c2{grid-template-columns:1fr}.dgrid .span2,.dgrid .span3{grid-column:auto}.two{grid-template-columns:1fr}.grid{grid-template-columns:1fr;grid-template-rows:520px 360px 360px 360px}}
+.thread{display:flex;flex-direction:column;gap:var(--sp-3);max-height:440px;overflow:auto;margin:var(--sp-2) 0 var(--sp-5);padding:var(--sp-6);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg)}
+.thread .sys{align-self:center;font-size:var(--fs-xs);color:var(--muted);text-align:center}
+.thread .msg{max-width:78%;align-self:flex-end;padding:var(--sp-3) var(--sp-5);border-radius:var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);background:var(--raise);border:1px solid var(--line2);white-space:pre-wrap;overflow-wrap:anywhere}
+.thread .msg.cust{align-self:flex-start;border-radius:var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm);background:var(--panel2)}
+.thread .msg .who{display:block;font-size:var(--fs-2xs);color:var(--muted);margin-bottom:var(--sp-1)}
+.thread .msg.cust .who{color:var(--signal2)}
+.thread .opts{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-2)}
+.thread .opts span{font-size:var(--fs-2xs);padding:var(--sp-1) var(--sp-4);border-radius:var(--radius-pill);border:1px solid var(--line2);color:var(--ink2)}
+
+/* Limits: a live control room. Colours come from the theme variables only. */
+.app.limitsmode{grid-template-rows:auto 1fr}
+.app.limitsmode>main>.notice,.app.limitsmode>main>.kpis,.app.limitsmode>main>.grid{display:none!important}
+.app.bnshown.dashmode,.app.bnshown.servicemode,.app.bnshown.limitsmode{grid-template-rows:auto auto 1fr}
+.app.bnshown:not(.dashmode):not(.servicemode):not(.limitsmode):has(>main>.notice:not(.hide)){grid-template-rows:auto auto auto auto 1fr}
+.lim{overflow:auto;min-height:0;padding:var(--sp-6) var(--sp-9) var(--sp-10);display:grid;gap:var(--sp-6);align-content:start}
+.lhead{display:grid;grid-template-columns:auto minmax(0,1.3fr) minmax(0,1fr) auto;gap:var(--sp-6);align-items:stretch}
+.lhead>*{background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);padding:var(--sp-6) var(--sp-8);min-width:0}
+.lhead .l{color:var(--muted);font-size:var(--label-size);text-transform:uppercase;letter-spacing:var(--label-track)}
+.lhead .s{color:var(--muted);font-size:var(--fs-sm);margin-top:var(--sp-1)}
+.lh-live{display:flex;align-items:center;gap:var(--sp-5);font-size:var(--fs-base);letter-spacing:.12em}
+.ldot{width:12px;height:12px;border-radius:var(--radius-round);background:var(--green);box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent);animation:pulse 2s infinite}
+.ldot.ping{animation:ping var(--dur-slow) ease-out}
+@keyframes ping{0%{transform:scale(1.7);background:var(--signal2)}100%{transform:scale(1)}}
+.lh-v{font-size:var(--fs-kpi);font-weight:var(--fw-display);font-stretch:var(--stretch-figure);line-height:var(--lh-tight);margin-top:var(--sp-2)}
+.lh-v small{font-size:var(--fs-body);color:var(--ink2);font-weight:var(--fw-medium)}
+.odo{display:flex;align-items:flex-end;font-size:var(--fs-kpi);font-weight:var(--fw-display);font-stretch:78%;line-height:1;margin-top:var(--sp-2);height:1em;font-variant-numeric:tabular-nums}
+.od{display:inline-block;height:1em;overflow:hidden;width:.62em}
+.oc{display:block;transition:transform var(--dur-slow) var(--ease-settle)}
+.oc i{display:block;height:1em;font-style:normal;text-align:center}
+.odsep{width:.3em;text-align:center;color:var(--muted)}
+.lh-cost{display:flex;align-items:center}
+.lcost{border:1px solid var(--line2);border-radius:var(--radius-pill);padding:var(--sp-3) var(--sp-6);font-size:var(--fs-md);color:var(--ink2);background:var(--panel2);white-space:nowrap}
+.lim select,.top select,#qCat{margin-left:var(--sp-3);background:var(--panel);color:var(--ink);border:1px solid var(--line2);border-radius:var(--radius-sm);padding:var(--sp-1) var(--sp-3);font-size:var(--fs-md);cursor:pointer;color-scheme:dark}
+:root[data-theme="slds-light"] .lim select,:root[data-theme="slds-light"] .top select,:root[data-theme="slds-light"] #qCat{color-scheme:light}
+.lim select option,.top select option,#qCat option{background:var(--panel);color:var(--ink)}
+.lim select:focus-visible,.top select:focus-visible,#qCat:focus-visible{outline:2px solid var(--signal);outline-offset:1px}
+.lalerts{display:grid;gap:var(--sp-4)}
+.lalerts:empty{display:none}
+.lal{display:flex;gap:var(--sp-5);align-items:center;padding:var(--sp-5) var(--sp-7);border-radius:var(--radius-lg);font-size:var(--fs-body);color:var(--ink);border:1px solid color-mix(in srgb,var(--amber) var(--tint-line),transparent);background:color-mix(in srgb,var(--amber) var(--tint-alert),transparent)}
+.lal i{width:9px;height:9px;border-radius:var(--radius-round);background:var(--amber);flex:none}
+.lal.over{border-color:color-mix(in srgb,var(--red) 55%,transparent);background:color-mix(in srgb,var(--red) var(--tint-on),transparent)}
+.lal.over i{background:var(--red);animation:pulse 2s infinite}
+.lal.new{animation:lslide var(--dur-slow) ease-out}
+.lal.more{border-style:dashed;background:none;color:var(--muted)}
+@keyframes lslide{from{transform:translateY(-14px);opacity:0}}
+.lrow{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:var(--sp-6)}
+.lbody{padding:var(--sp-4) var(--sp-6) var(--sp-6);min-height:0;overflow:auto}
+.lbody svg{width:100%;height:auto;display:block}
+.lkeys{gap:var(--sp-6)!important;font-size:var(--fs-sm)!important;color:var(--ink2)}
+.lk{display:inline-flex;align-items:center;gap:var(--sp-3)}
+.lk i{width:9px;height:9px;border-radius:var(--radius-round);background:var(--k,var(--signal))}
+.lk.own{--k:var(--signal)} .lk.rest{--k:var(--d2)}
+.k-apex{--k:var(--d1)} .k-batch{--k:var(--d6)} .k-graphql{--k:var(--d2)} .k-ui-api{--k:var(--d3)} .k-connect{--k:var(--d4)} .k-action{--k:var(--d5)}
+.lfe{fill:none;stroke:var(--line2);stroke-width:1;opacity:.7;transition:stroke-width var(--dur-slow),stroke var(--dur-slow)}
+.lfe.on{stroke:var(--signal);opacity:.85}
+.lfn rect{fill:var(--panel2);stroke:var(--line2);stroke-width:1.2}
+.lft{fill:var(--ink);font-size:var(--fs-md);font-weight:var(--fw-semibold)}
+.lfs{fill:var(--muted);font-size:var(--fs-3xs)}
+.lp{fill:var(--k,var(--signal));stroke:var(--panel);stroke-width:1}
+.lp.bad{fill:var(--red)}
+.ct{fill:var(--chart-axis);font-size:var(--fs-3xs)}
+.cg{stroke:var(--chart-grid);stroke-width:1}
+.cb.own{fill:var(--signal)} .cb.rest{fill:var(--d2)}
+.dtrack{fill:var(--chart-track)} .dused{fill:var(--signal)} .dproj{fill:color-mix(in srgb,var(--signal) var(--tint-fill),transparent);stroke:var(--signal);stroke-dasharray:4 3}
+.dmax{stroke:var(--red);stroke-width:2}
+.lsub{color:var(--muted);font-size:var(--fs-md);padding:var(--sp-1) var(--sp-2)}
+.lgauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:var(--sp-6)}
+.lgauges:empty{display:none}
+.lg{position:relative;background:var(--card-bg);border:1px solid var(--card-line);border-radius:var(--card-radius);padding:var(--sp-6) var(--sp-6) var(--sp-7);text-align:center;transition:box-shadow var(--dur-med)}
+.lg svg{width:116px;height:116px}
+.lgt{fill:none;stroke:var(--chart-track);stroke-width:10}
+.lga{fill:none;stroke:var(--signal);stroke-width:10;stroke-linecap:round}
+.lv-warn .lga{stroke:var(--amber)} .lv-over .lga{stroke:var(--red)}
+.lg.glow{box-shadow:0 0 0 2px color-mix(in srgb,var(--signal) 55%,transparent)}
+.lgc{position:absolute;left:0;right:0;top:50px;font-size:var(--fs-2xl)}
+.lgp{font-weight:var(--fw-display);font-stretch:80%}
+.lv-over .lgp{color:var(--red)} .lv-warn .lgp{color:var(--amber)}
+.lgl{font-weight:var(--fw-semibold);margin-top:var(--sp-1)} .lgv{color:var(--ink2);font-size:var(--fs-md)} .lgr{color:var(--muted);font-size:var(--fs-sm);margin-top:var(--sp-1);min-height:1.3em}
+.lledger{padding:0}
+.lr{display:grid;grid-template-columns:70px 78px minmax(0,1fr) 70px 64px 90px;gap:var(--sp-4);align-items:center;padding:var(--sp-3) var(--sp-7);border-bottom:1px solid var(--line);font-size:var(--fs-md)}
+.lr.in{animation:lslide var(--dur-med) ease-out}
+.lr.bad{background:color-mix(in srgb,var(--red) var(--tint-alert),transparent)}
+.lr em{color:var(--amber);font-style:normal;font-weight:var(--fw-semibold)}
+.kp{display:inline-block;text-align:center;border-radius:var(--tag-radius);padding:1px var(--sp-4);font-size:var(--fs-2xs);background:color-mix(in srgb,var(--k,var(--signal)) 22%,transparent);color:var(--ink)}
+.ls{color:var(--muted)} .lpth{white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .lms,.lrw{text-align:right;color:var(--ink2)}
+.mbar{height:var(--chart-bar);border-radius:var(--chart-bar-radius);background:var(--chart-track);overflow:hidden}
+.mbar i{display:block;height:100%;background:var(--green)} .mbar i.amber{background:var(--amber)} .mbar i.red{background:var(--red)}
+.lsg{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-5);padding:var(--sp-6)}
+.lst{background:var(--panel2);border:1px solid var(--line);border-radius:var(--radius-lg);padding:var(--sp-5) var(--sp-6)}
+.lst .l,.lmix .l{color:var(--muted);font-size:var(--label-size);text-transform:uppercase;letter-spacing:var(--label-track)}
+.lst .v{font-size:var(--fs-4xl);font-weight:var(--fw-display);font-stretch:80%} .lst .v small{font-size:var(--fs-sm);color:var(--ink2);font-weight:var(--fw-medium)} .lst .s{color:var(--muted);font-size:var(--fs-sm)}
+.lst.bad .v,.lst.red .v{color:var(--red)} .lst.amber .v{color:var(--amber)}
+.lmix{padding:var(--sp-1) var(--sp-6) var(--sp-6)}
+.mixbar{display:flex;height:10px;border-radius:var(--radius-sm);background:var(--chart-track);overflow:hidden;margin:var(--sp-3) 0}
+.mixbar .gq{background:var(--d2)} .mixbar .ap{background:var(--d1)}
+.lref{overflow:visible} .lref summary{cursor:pointer;padding:var(--sp-6) var(--sp-7);font-weight:var(--fw-semibold);color:var(--ink2)}
+.lrefb{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:var(--sp-8);padding:0 var(--sp-7) var(--sp-7)}
+.lrefb h3{margin:0 0 var(--sp-4);font-size:var(--fs-sm);text-transform:uppercase;letter-spacing:.08em;color:var(--ink2)}
+.ltr{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 44px;gap:var(--sp-4);align-items:center;font-size:var(--fs-md);padding:var(--sp-2) 0}
+.ltr .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .ltr .val{text-align:right;color:var(--ink2)}
+.ltr .bar{height:var(--chart-bar);border-radius:var(--chart-bar-radius);background:var(--chart-track);overflow:hidden} .ltr .bar i{display:block;height:100%;background:var(--signal)}
+.ltr.lv-warn .bar i{background:var(--amber)} .ltr.lv-over .bar i{background:var(--red)}
+.lsrch{display:flex;gap:var(--sp-4);margin-bottom:var(--sp-4)} .lsrch input{flex:1;background:var(--field-bg);border:1px solid var(--field-line);border-radius:var(--field-radius);padding:var(--field-pad)}
+.lall{max-height:340px;overflow:auto}
+.lacc{font-size:var(--fs-base);padding:var(--sp-1) 0}.lacc.ok>span:first-child{color:var(--green)}.lacc.blocked>span:first-child{color:var(--red)}.lacc.empty>span:first-child{color:var(--amber)}
+.lall tr.lv-over .lpc{color:var(--red)} .lall tr.lv-warn .lpc{color:var(--amber)}
+.lim.frozen .ldot{animation-play-state:paused}
+@media (max-width:1250px){.lrow,.lrefb{grid-template-columns:1fr}.lhead{grid-template-columns:1fr 1fr}.lr{grid-template-columns:62px 70px minmax(0,1fr) 62px 56px 70px}}
+@media (prefers-reduced-motion:reduce){.ldot,.ldot.ping,.lal.new,.lal.over i,.lr.in{animation:none}.oc,.lfe,.lg{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" id="skip" href="#app">Skip to content</a>
+
+<main id="gate" class="gate hide">
+  <div class="card">
+    <div class="mark"><svg viewBox="0 0 24 24" width="22" height="22" fill="#fff" aria-hidden="true"><circle cx="8.5" cy="10.5" r="3.6"/><circle cx="13" cy="8.6" r="4.1"/><circle cx="17.4" cy="11.2" r="3.5"/><circle cx="6.2" cy="14.2" r="3"/><circle cx="11.3" cy="15" r="3.3"/><circle cx="16.3" cy="14.8" r="3.1"/></svg></div>
+    <h1>Connect your Order Management org</h1>
+    <div class="theme-ctl" id="gateTheme"><button class="theme-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Theme" title="Theme"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button><div class="theme-menu hide" role="menu" aria-label="Theme"><button role="menuitemradio" data-theme-v="standard">Standard</button><button role="menuitemradio" data-theme-v="slds-light">Salesforce Light</button><button role="menuitemradio" data-theme-v="slds-dark">Salesforce Dark</button></div></div>
+    <p class="cli-only">Sign in with Salesforce. Your login opens in your default browser; this page updates once you're connected.</p>
+    <p class="browser-only hide">Sign in with Salesforce. You'll go to your org's login page and come straight back here.</p>
+    <div class="opts browser-only hide">
+      <div class="custom"><input id="bDomain" placeholder="https://yourdomain.my.salesforce.com" aria-label="My Domain URL"><button data-env="borg">Sign in</button></div>
+      <input id="bClient" placeholder="Consumer key of your org's External Client App" aria-label="Consumer key">
+    </div>
+    <div class="opts cli-only">
+      <button data-env="production"><span>Production / Developer org<br><small>login.salesforce.com</small></span><span>→</span></button>
+      <button data-env="sandbox"><span>Sandbox<br><small>test.salesforce.com</small></span><span>→</span></button>
+      <div class="custom"><input id="customUrl" placeholder="https://yourdomain.my.salesforce.com" aria-label="My Domain URL"><button data-env="custom">Sign in</button></div>
+    </div>
+    <div id="gateWait" class="wait hide">Waiting for you to finish signing in in the browser…</div>
+    <div id="gateErr" class="err hide"></div>
+    <div class="note browser-only hide">
+      Signs in with OAuth (PKCE) straight from this page. The token stays in this browser tab and is only sent to your org. Read-only.
+      Your org needs an External Client App (PKCE) and a CORS entry for this site.
+      <br><a href="?demo=1" style="color:var(--signal)">Preview with sample data</a>
+    </div>
+    <div class="note cli-only">
+      Uses its own sf CLI alias <b id="aliasName">om-console</b> and never changes your default org.
+      <br><a href="?demo=1" style="color:var(--signal)">Preview with sample data</a>
+    </div>
+  </div>
+</main>
+
+<div id="app" class="app hide">
+  <header class="top">
+    <div class="brand"><div class="mark" style="width:28px;height:28px"><svg viewBox="0 0 24 24" width="20" height="20" fill="#fff" aria-hidden="true"><circle cx="8.5" cy="10.5" r="3.6"/><circle cx="13" cy="8.6" r="4.1"/><circle cx="17.4" cy="11.2" r="3.5"/><circle cx="6.2" cy="14.2" r="3"/><circle cx="11.3" cy="15" r="3.3"/><circle cx="16.3" cy="14.8" r="3.1"/></svg></div><h1>Salesforce Order Management Operations Console</h1></div>
+    <div class="seg-ctl" id="mode" role="group" aria-label="View" title="Switch view (V)"><button data-m="console" class="on">Operations Console</button><button data-m="dashboard">Dashboard</button><button data-m="service">Service Console</button><button data-m="limits">Limits</button></div>
+    <button id="live" class="live paused" title="Turn automatic refresh on or off (Space)"><i></i><span>Paused</span></button>
+    <div class="seg-ctl" id="range" role="group" aria-label="Time range">
+      <button data-v="today">Today</button><button data-v="7d">7 days</button><button data-v="30d">30 days</button><button data-v="90d" class="on">90 days</button><button data-v="6m">6 months</button><button data-v="1y">1 year</button><button data-v="all" class="hide">All open</button>
+    </div>
+    <div class="seg-ctl hide" id="period" role="group" aria-label="Dashboard period">
+      <button data-v="today">Today</button><button data-v="mtd" class="on">MTD</button><button data-v="qtd">QTD</button><button data-v="ytd">YTD</button><button data-v="6m">6 months</button><button data-v="1y">1 year</button><button data-v="all">All time</button>
+    </div>
+    <div class="scope-ctl hide" id="scope" role="group" aria-label="Filters">
+      <label id="fStoreL">Store <select id="fStore"><option value="">All stores</option></select></label>
+      <label id="fChannelL">Sales channel <select id="fChannel"><option value="">All channels</option></select></label>
+    </div>
+    <i class="spin" role="status" aria-label="Refreshing"></i><span id="updated" class="muted" style="font-size:var(--fs-md)"></span>
+    <div class="org"><div class="theme-ctl" id="theme"><button class="theme-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Theme" title="Theme"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button><div class="theme-menu hide" role="menu" aria-label="Theme"><button role="menuitemradio" data-theme-v="standard">Standard</button><button role="menuitemradio" data-theme-v="slds-light">Salesforce Light</button><button role="menuitemradio" data-theme-v="slds-dark">Salesforce Dark</button></div></div><i id="orgDot" class="dot"></i><span id="orgName"></span><label class="every">Auto-refresh <select id="every" aria-label="How often this view asks the org; Off keeps it passive"><option value="off">Off</option><option value="300">5m</option><option value="900">15m</option><option value="1800">30m</option><option value="3600">1h</option></select></label><button id="refresh">Refresh</button><button id="logout">Disconnect</button></div>
+  </header>
+  <main id="content">
+  <div class="banner hide" id="banner"></div>
+  <div class="notice hide" id="notice"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid">
+    <div class="zone">
+      <h2>Fulfillment network <span class="sub" id="netSub"></span>
+        <span class="right"><span class="chips" id="layers" role="group" aria-label="Map layer"></span><label class="tog"><input type="checkbox" id="flowsOn" checked> Flows</label></span></h2>
+      <div class="net">
+        <div class="mapwrap" id="mapwrap">
+          <svg class="map" id="map" viewBox="0 0 975 610" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Fulfillment network map: each location is a button"></svg>
+          <div class="zoom" id="zoom" role="group" aria-label="Map zoom"><button data-z="in" title="Zoom in (+)" aria-label="Zoom in">+</button><button data-z="out" title="Zoom out (−)" aria-label="Zoom out">−</button><button data-z="reset" title="Reset zoom (0)" aria-label="Reset zoom">⟲</button><button data-z="full" title="Full screen (F)" aria-label="Full screen" aria-pressed="false">⛶</button></div>
+          <div class="tip hide" id="tip"></div>
+          <div class="focus hide" id="focus"></div>
+          <div class="psearch hide" id="psearch"><input id="pq" type="search" placeholder="Find a product: name, code or SKU" autocomplete="off" spellcheck="false" aria-label="Search products" aria-controls="pres"><div class="pres hide" id="pres" role="listbox" aria-label="Products"></div></div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="maphint">Hover a state · click a location to focus · <kbd>Tab</kbd> to locations and states · scroll or <kbd>+</kbd>/<kbd>−</kbd> to zoom, drag to pan · <kbd>F</kbd> full screen · <kbd>Space</kbd> auto-refresh</div>
+    </div>
+    <div class="zone"><h2>Exception queue <span class="sub" id="exSub"></span></h2><div class="tabs" id="exTabs"></div><div class="body" id="exList"></div></div>
+    <div class="zone"><h2>Activity stream <span class="sub" id="stSub">newest activity first</span></h2><div class="tabs" id="stTabs"></div><div class="body" id="stream"></div></div>
+    <div class="zone"><h2>Status board <span class="sub" id="sbSub"></span></h2><div class="body" id="board"></div></div>
+  </div>
+  <div class="dash hide" id="dash">
+    <div class="dhead"><div><h1 id="dTitle"></h1><div class="sub" id="dSub"></div></div><div class="right"><button id="dataMapBtn" title="Every query behind this page">Data map</button></div></div>
+    <div class="notice hide" id="dNotice"></div>
+    <div class="kpis" id="dTiles"></div>
+    <div class="dtabs" id="dTabs" role="tablist" aria-label="Dashboard domain"></div>
+    <div class="dgrid" id="dGrid"></div>
+  </div>
+  <div class="svc hide" id="service">
+    <div class="zone"><h2>Team queue <span class="sub" id="qSub"></span></h2><div class="tabs" id="qTabs"></div><div class="body" id="queue" role="listbox" tabindex="0" aria-label="Team queue"></div></div>
+    <div class="zone">
+      <div class="srch"><input id="svcSearch" type="search" placeholder="Find a customer: name, email, phone or order number" autocomplete="off" spellcheck="false" aria-label="Find a customer" aria-controls="svcResults"><kbd>/</kbd><div class="svcres hide" id="svcResults" role="listbox" aria-label="Customer search results"></div></div>
+      <div class="body c360" id="c360"></div>
+    </div>
+  </div>
+  <div class="lim hide" id="limits">
+    <div class="lhead">
+      <div class="lh-live"><span class="ldot" id="lDot"></span><b>LIVE</b><span class="muted" id="lState"></span></div>
+      <div class="lh-c" title="Every API request the org has counted today, from all users and integrations, against the daily allowance. It resets about every 24 hours."><div class="l">Org API calls today</div><div class="odo" id="lOdo" role="img"></div><div class="s" id="lOdoSub"></div></div>
+      <div class="lh-c" title="Calls this console made in the last 60 seconds (Operations Console, Dashboard, Service Console and this tab's own checks), with an arrow against the minute before. 'Rest of org' is an estimate: the org's daily API counter moved by more than this console's own calls, so someone or something else made the difference. Naming who needs Event Monitoring."><div class="l">Calls per minute</div><div class="lh-v" id="lRate">—</div><div class="s" id="lRateSub"></div></div>
+      <div class="lh-c lh-cost"><span class="lcost" id="lCost"></span></div>
+    </div>
+    <div class="lalerts" id="lAlerts" role="status" aria-live="polite"></div>
+    <div class="lrow">
+      <section class="zone"><h2>Request flow <span class="sub">every call, as it happens</span><span class="right lkeys" id="lKeys"></span></h2><div class="lbody"><svg id="lFlow" viewBox="0 0 720 280" role="img" aria-label="Requests flowing from the console tabs through Apex REST and UI API to the org"></svg></div></section>
+      <section class="zone"><h2>Last <span id="lChartWin">15 minutes</span> <span class="sub" id="lChartSub">calls per 10 s</span><span class="right lkeys"><select id="lWin" aria-label="Chart window"><option value="300">5m</option><option value="900">15m</option><option value="3600">1h</option></select><span class="lk own"><i></i>This console</span><span class="lk rest"><i></i>Rest of org</span></span></h2><div class="lbody"><svg id="lChart" viewBox="0 0 600 176" role="img" aria-label="Calls over the chart window"></svg><svg id="lDay" viewBox="0 0 600 52" role="img" aria-label="Today so far and the projection to midnight"></svg><div class="lsub" id="lDaySub"></div></div></section>
+    </div>
+    <div class="lgauges" id="lGauges"></div>
+    <div class="lrow">
+      <section class="zone"><h2>Live call ledger <span class="sub">newest first · Apex rows against the 50,000 cap</span></h2><div class="lbody lledger" id="lLedger"></div></section>
+      <section class="zone"><h2>Session <span class="sub">since the meter started</span></h2><div class="lbody" id="lStats"></div></section>
+    </div>
+    <details class="zone lref" id="lRef"><summary>Reference: closest to the limit, and every limit, licence and entitlement</summary>
+      <div class="lrefb"><div><h3>Closest to the limit</h3><div id="lTop"></div><div class="lsub" id="lJobs"></div><h3 style="margin-top:var(--sp-7)">What this user can read</h3><div id="lAccess"></div></div>
+      <div><div class="lsrch"><input id="lSearch" type="search" placeholder="Search limits" autocomplete="off" spellcheck="false" aria-label="Search limits"><button id="lCsv" class="linkbtn">CSV</button></div><div class="lall" id="lAll"></div></div></div></details>
+  </div>
+  </main>
+</div>
+
+<div id="scrim" class="scrim hide"></div>
+<div id="drawer" class="drawer hide" role="dialog" aria-label="Record details"></div>
+<div id="modal" class="modal hide" role="dialog" aria-modal="true" aria-label="Data map"></div>
+<div id="dtip" class="tip dtip hide"></div>
+<div id="dlive" class="sr-only" aria-live="polite"></div>
+
+<script type="module">
+import { DEMO, PLATFORM, BROWSER } from './om-mode.js';
+import { $, esc, money, num, drawerItems, pct, ago, NATIVE, tipAt, pressed, focusSel, keepFocus } from './console-kit.js';
+import { RANGE_LABEL, PERIOD_LABEL, WIDER, PRIOR_LABEL, shownKey, failNote, scopeQuery, scopeText, scopeNames } from './console-labels.js';
+import { conic, P48, PAK, PHI, proj, STATES, BY_NAME, toAbbr, ringArc, LAYERS, RAMP, rampAt } from './console-geo.js';
+import { J_TTL, J_MAX, J_ROUTES, jCheck, makeJCache } from './console-jcache.js';
+import { CSV_FORMULA, CSV_NUMBER, csvCell, csvText } from './console-csv.js';
+import { LIM_WARN, LIM_ROWS, LIM_SRC, LIM_SRC_NAME, LIM_GW_NAME, LIM_G2O, LIM_SY, LIM_GY, LIM_OY, limFrac, limLevel, LIM_RANK, limCross, limProject, limFullIn, odoDigits, limBar, limCalls, limTrend, limRest, limAmt, limGate, limSrcIdx, limNice, LIM_NAMES, limLabel, LIM_OM, limRows, limGauges, limPoint, limBins } from './console-limits.js';
+import { BASE_TITLE, isAuthFailure, tabTitle, loadProblem } from './console-banner.js';
+import { AGENT, csvStore, askStore, panel, agentRows, agentPanelFacts } from './console-panels.js';
+import { hbars, dur, pct1, ratio, mdelta, stats, na, buckets, niceMax, columns } from './console-charts.js';
+import { DEMO_PRODUCTS, demoFilters, demoCustGeo, demoPolicies, demoData, demoInventory, demoDash, demoAgent, demoExtra, DEMO_ITEMS, demoHistory, demoOrder, demoProducts, DEMO_ACCTS, demoCustomers, demoAccount, DEMO_SVC, demoService, demoSearch, demoChat, demoCustomer, demoRecord, demoPage } from './console-demo.js';
+import { createLimitsView } from './console-limits-view.js';
+import { S } from './console-state.js';
+import { createServiceView } from './console-service-view.js';
+import { createDrawers } from './console-drawers.js';
+import { createDashView } from './console-dash-view.js';
+import { createMapView } from './console-map-view.js';
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)');
+let loadSeq = 0, pollTimer = null, missed = false;
+S.data = null; S.range = '90d'; S.exFilter = 'All'; S.seen = new Set(); S.streamTab = 'orders'; S.live = false; // auto-refresh is opt-in: each poll costs dozens of API calls on the org's daily limit
+S.layer = 'demand'; S.focusKey = null; S.geo = null;
+demoPage.data = () => S.data; // the sample drawers follow what the console shows
+const DOMAINS = [['orders', 'Orders'], ['customers', 'Customers'], ['fulfillment', 'Fulfillment'], ['payments', 'Payments'], ['service', 'Service'], ['returns', 'Returns'], ['products', 'Products'], ['policies', 'Policies']];
+const MODES = ['console', 'dashboard', 'service', 'limits'], SF_ID = /^[a-zA-Z0-9]{15}(?:[a-zA-Z0-9]{3})?$/;
+S.mode = MODES.find((m) => m !== 'console' && location.hash.startsWith('#' + m)) || (new URLSearchParams(location.search).get('mode') === 'limits' ? 'limits' : 'console'); S.dash = null; let period = 'mtd';
+// The Store and Sales channel filters, shared by the Operations Console and the Dashboard: the pick (WebStore and SalesChannel Ids,
+// '' for all) and what /api/filters offers (undefined until read, or after a failed read; a list is null when the org can't filter
+// its orders by it).
+S.store = ''; S.channel = ''; S.scopes = undefined;
+// Service tab: the queue, the open customer (#service/<accountId>) and the queue filters. A malformed id in the hash just means no customer.
+S.svc = null; S.custId = ((h) => (h[0] === '#service' && SF_ID.test(h[1] || '') ? h[1] : null))(location.hash.split('/')); S.cust = null; S.custFocus = null; S.custSeq = 0;
+S.qKind = 'All'; S.qOwner = 'Anyone'; S.qCat = ''; S.qSel = null;
+S.dtab = DOMAINS.some(([k]) => k === location.hash.split('/')[1]) ? location.hash.split('/')[1] : 'orders';
+const shownRange = () => shownKey(S.data, 'range', S.range, RANGE_LABEL), shownPeriod = () => shownKey(S.dash, 'period', period, PERIOD_LABEL);
+const rangeText = () => RANGE_LABEL[shownRange()], periodText = () => PERIOD_LABEL[shownPeriod()];
+
+S.prod = null; S.invSeq = 0; // { p: Product2 row, inv: /api/inventory result | null, err }
+
+// ---------- data access ----------
+// The mode comes from the address (om-mode.js, shared with OM Service Console): sample data (DEMO); inside Salesforce (PLATFORM), where
+// the page has the user's session and reads through the org's read-only SomConsoleRead Apex endpoint (om-platform.js); the
+// browser's own OAuth PKCE sign-in (BROWSER: GitHub Pages, or ?auth=browser on localhost), where the same om-core.js queries
+// run here instead of in server.mjs; or else the local server.
+// Inside Salesforce every call goes through one platform; each call is also handed to the request meter (see LIMITS VIEW).
+// ?reads=graphql sends plain row reads and describes through UI API GraphQL too (a prototype; the console only).
+let pf = null;
+const platformMode = () => (pf ||= (async () => { await meterInit(); return (await import('./om-command-platform.js')).createPlatform({ onRequest: meterRecord, graphqlReads: new URLSearchParams(location.search).get('reads') === 'graphql' }); })());
+let omb = null;
+const browserAuth = async () => (omb ||= await import('./om-command-browser.js'));
+async function jFetch(url, opts) {
+  if (PLATFORM) { try { return await (await platformMode()).route(url, opts); } catch (e) { throw Object.assign(e, { status: e.code }); } }
+  if (BROWSER) { try { return await (await browserAuth()).route(url, opts); } catch (e) { throw Object.assign(e, { status: e.code }); } }
+  const r = await fetch(url, opts); const b = await r.json().catch(() => ({})); if (!r.ok) throw Object.assign(new Error(b.error || r.statusText), { status: r.status, kind: b.kind, orgBlocked: b.orgBlocked === true }); return b;
+}
+const jc = makeJCache(jFetch);
+function j(url, opts) { return jc(url, opts); }
+
+// ---------- Agentforce ----------
+// The panel lives in agent-panel.js. Fields are record Ids and view state; facts are what's on screen, with no names,
+// emails, addresses, case subjects or exception messages. Dashboard rows come only from panels flagged AGENT; the regex in
+// agent-panel.js is a second line of defence, not the allowlist.
+// The label is what the context row shows, and is never sent.
+S.agent = null; S.agentAsk = null; // agentAsk: the dashboard panel whose Ask button was clicked last
+const sameId = (a, b) => !!a && !!b && a.slice(0, 15) === b.slice(0, 15);
+// Service's "selected order": the focused one, else the first with open exceptions, else the newest.
+function agentOrder(c) {
+  const os = c?.orders || [], when = (o) => String(o.OrderedDate || o.CreatedDate || '');
+  return os.find((o) => sameId(o.Id, S.custFocus)) || os.find((o) => o.exceptions?.length) || [...os].sort((a, b) => when(b).localeCompare(when(a)))[0] || null;
+}
+const plural = (n, one, many = one + 's') => `${num(n)} ${n === 1 ? one : many}`;
+const topCounts = (list, n = 6) => list.filter((x) => x.n).sort((a, b) => b.n - a.n).slice(0, n).map((x) => `${x.key} ${num(x.n)}`).join(', ');
+function serviceContext() {
+  const c = S.custId && S.cust ? S.cust : null, o = agentOrder(c);
+  if (!c) return { view: 'service', customer: null, fields: {}, label: S.svc ? 'Service queue' : '' };
+  const orders = c.orders || [], cases = o ? c.attention.cases.filter((x) => sameId(x.order?.id, o.Id)) : [], exs = o?.exceptions || [];
+  const facts = [`Customer has ${c.orders ? plural(orders.length, 'order') : 'unavailable orders'}, ${plural(c.attention.cases.length, 'open case')} and ${plural(c.attention.exceptions.length, 'open exception')}`];
+  if (o) {
+    facts.push(`Selected order ${o.OrderNumber} (Id ${o.Id}): ${o.Status}, ${money(o.GrandTotalAmount)}, ordered ${shortDate(o.OrderedDate || o.CreatedDate)}${o.SalesChannel?.SalesChannelName ? `, channel ${o.SalesChannel.SalesChannelName}` : ''}`);
+    (o.fulfillmentOrders || []).slice(0, 5).forEach((f) => {
+      const idle = f.LastModifiedDate ? Math.floor((Date.now() - new Date(f.LastModifiedDate)) / 864e5) : null;
+      facts.push(`Fulfillment order ${f.FulfillmentOrderNumber || f.Id}: ${f.Status} from ${f.FulfilledFromLocation?.Name || 'no location'}${idle != null ? `, last changed ${plural(idle, 'day')} ago` : ''}${f.shipments?.length ? `, ${plural(f.shipments.length, 'shipment')} (${f.shipments.map((x) => x.Status).filter(Boolean).join(', ')})` : ''}`);
+    });
+    exs.slice(0, 4).forEach((x) => facts.push(`Open exception on ${o.OrderNumber}: ${x.category || 'Uncategorized'}, priority ${x.priority || 'none'}${x.count > 1 ? `, ${num(x.count)} times` : ''}`));
+    cases.slice(0, 4).forEach((x) => facts.push(`Case ${x.CaseNumber} on ${o.OrderNumber}: ${x.Status}, priority ${x.Priority || 'none'}`));
+  }
+  const others = orders.filter((x) => x !== o).slice(0, 3).map((x) => `${x.OrderNumber} ${x.Status}`);
+  if (others.length) facts.push(`Other orders: ${others.join(', ')}`);
+  const label = o ? [`Order ${o.OrderNumber}`, o.Status, exs.length && plural(exs.length, 'exception'), cases.length && plural(cases.length, 'case')].filter(Boolean).join(' · ') : c.orders ? plural(orders.length, 'order') : 'Orders unavailable';
+  return { view: 'service', customer: c.account.Id, label, facts, who: c.account.Name, // who is shown, never sent
+    fields: { Account: c.account.Id, OrderSummary: o?.Id, Case: cases.map((x) => x.Id), ProcessException: exs.map((x) => x.id) } };
+}
+// Rows of a dashboard panel go to the agent only if its panel() call passes AGENT. A panel is private by default;
+// the four customer-ranking panels stay private.
+function dashboardContext() {
+  const t = (S.dash && dp(S.dash.tiles)) || {}, ask = S.agentAsk?.tab === S.dtab ? S.agentAsk : null;
+  const tile = (l, x, f = num) => x && `${l}: ${f(x.cur)}${x.prev != null ? ` (previous period ${f(x.prev)})` : ''}`;
+  const facts = [`Period: ${periodText()}, tab ${S.dtab}`, tile('Orders', t.orders), tile('Order value', t.value, money), tile('Returns', t.returns), tile('Refunds issued', t.refunds, money), tile('Process exceptions', t.exceptions)];
+  facts.push(...agentPanelFacts(ask ? [ask.id] : [...document.querySelectorAll('#dGrid [data-ask]')].map((b) => b.dataset.ask), ask?.id));
+  return { view: 'dashboard', label: [periodText(), scopeText(S.dash?.scope, S.scopes), DOMAINS.find(([k]) => k === S.dtab)?.[1] || S.dtab, ask?.panel].filter(Boolean).join(' · '), facts: facts.filter(Boolean),
+    fields: { tab: S.dtab, period: shownPeriod(), ...scopeFields(S.dash), ...(ask ? { panel: ask.panel, object: ask.object } : {}) } };
+}
+function consoleContext() {
+  const k = S.data?.kpis?.ok ? S.data.kpis.data : {}, ex = rows(S.data?.exceptions), sb = S.data?.statusBoard?.ok ? S.data.statusBoard.data : {};
+  const focus = S.geo?.clusters.find((c) => c.key === S.focusKey), locs = rows(S.data?.network);
+  const byCat = {}; ex.forEach((e) => { const c = e.Category || 'Uncategorized'; byCat[c] = (byCat[c] || 0) + 1; });
+  const pairs = (o) => Object.entries(o || {}).map(([key, n]) => ({ key, n }));
+  const facts = [
+    S.data && `${rangeText()}: ${num(k.orders)} orders worth ${money(k.value)}, ${num(k.openExceptions)} open exceptions, ${num(k.paymentHolds)} payment holds${k.returns != null ? `, ${num(k.returns)} returns` : ''}; ${num(k.stuck)} fulfillment orders stuck over 2 hours right now`,
+    ...productFacts(), // ahead of the location rows, which the fact limit drops first
+    ex.length && `The ${plural(ex.length, 'exception')} listed on screen, by category: ${topCounts(pairs(byCat))}`,
+    S.geo && `Open exceptions by ship-to state: ${topCounts(pairs(S.geo.risk.by), 8) || 'none'}`,
+    sb.orders?.length && `Order statuses: ${topCounts(sb.orders, 8)}`,
+    sb.fulfillment?.length && `Fulfillment order statuses: ${topCounts(sb.fulfillment, 8)}`,
+    ...[...locs].sort((a, b) => (b.openFOs || 0) - (a.openFOs || 0)).slice(0, 8).map((l) => `Location ${l.name} (${[l.type, l.city, l.state].filter(Boolean).join(', ')}): ${plural(l.openFOs || 0, 'open fulfillment order')}${l.cap ? `, ${Math.round(((l.assigned || 0) / l.cap) * 100)}% of capacity` : ''}`),
+    focus && `Selected on the map: ${focus.label}, ${plural(focus.open, 'open fulfillment order')}${focus.load != null ? `, ${Math.round(focus.load * 100)}% of capacity` : ''}`,
+  ];
+  return { view: 'console', label: [rangeText(), scopeText(S.data?.scope, S.scopes), `${S.layer} map`, focus?.label, S.data && plural(locs.length, 'location')].filter(Boolean).join(' · '), facts: facts.filter(Boolean),
+    fields: { range: shownRange(), layer: S.layer, location: focus?.label, ...scopeFields(S.data) } };
+}
+// The product on the map's Inventory layer: its stock (or units) by location, from the source the legend names. Agentforce has no
+// stock read of its own, so this is how it can say where else has it.
+function productFacts() {
+  const p = S.prod?.p, inv = S.prod?.inv;
+  if (!p || !inv) return [];
+  const at = (list) => list.slice(0, 8).map((l) => `${l.name} ${num(l.qty)}`).join(', ');
+  return [`Product on the map: ${p.Name}${p.StockKeepingUnit ? ` SKU ${p.StockKeepingUnit}` : ''}, ${inv.measure.toLowerCase()} from ${inv.source}${inv.source === 'Orders' ? ` ${rangeText()}` : ' right now'}, at ${plural(inv.locations.length, 'location')}`,
+    inv.locations.length && `${inv.measure} by location: ${at(inv.locations)}`, inv.groups?.length && `${inv.measure} by location group: ${at(inv.groups)}`].filter(Boolean);
+}
+// An open record drawer's facts (a fulfillment order's routing) go first, so the fact limit drops the page's last ones instead.
+const withDrawer = (c) => { const d = drawerFacts(); return d.length ? { ...c, facts: [...d, ...(c.facts || [])] } : c; };
+const getAgentContext = () => withDrawer(S.mode === 'limits' ? limitsContext() : S.mode === 'service' ? serviceContext() : S.mode === 'dashboard' ? dashboardContext() : consoleContext());
+
+// CSV export: a cell that starts with = + - @ (or a tab or CR) would run as a formula in a spreadsheet, so it gets a leading ' first.
+// A real number, or a string that is only a number ('-5', '-1.50'), can't run and stays as it is. Rows in csvStore stay raw; only the file is escaped.
+
+const { lim, meterInit, meterRecord, EVERY_KEY, everyMs, pollMs, limSync, limEnter, limLeave, limPill, limLoad, limApply, limitsContext, limPaintHead } = createLimitsView({ mode: () => S.mode, live: () => S.live, j, browserAuth, showGate, syncEvery });
+// ===================== end LIMITS VIEW =====================
+
+async function boot() {
+  if (DEMO) { showApp({ username: 'Sample data (not connected)', demo: true }); return load().finally(openFromUrl); }
+  if (PLATFORM) {
+    document.querySelectorAll('#gate .opts, #gate .note, #gate .cli-only, #gate .browser-only').forEach((el) => el.classList.add('hide'));
+    $('#logout').classList.add('hide'); // Salesforce owns the session here
+    const s = await (await platformMode()).status();
+    dockSessionBanner();
+    return s.connected ? (showApp(s), load().finally(openFromUrl)) : showGate(s);
+  }
+  if (BROWSER) {
+    document.querySelectorAll('.browser-only').forEach((el) => el.classList.remove('hide'));
+    document.querySelectorAll('.cli-only').forEach((el) => el.classList.add('hide'));
+    const b = await browserAuth();
+    try { await b.completeLogin(); } catch (e) { return showGate({ error: e.message }); }
+    const s = b.status();
+    return s.connected ? (showApp(s), load().finally(openFromUrl)) : showGate(s);
+  }
+  showGate({});
+  const s = await j('/api/status');
+  $('#aliasName').textContent = s.alias;
+  if (s.connected) { showApp(s); load().finally(openFromUrl); }
+  else showGate(s);
+}
+// Inside Salesforce the platform adds its session bar (the signed-in user and Log out) as <sf-session-banner> on <body>, fixed
+// across the top. Dock it in the header in place of the org name, so it sits with the console's own controls.
+function dockSessionBanner() {
+  const dock = () => {
+    const b = document.querySelector('body > sf-session-banner');
+    if (!b) return false;
+    $('.top .org').insertBefore(b, $('#refresh'));
+    document.body.classList.add('banner-docked');
+    return true;
+  };
+  if (dock()) return;
+  const mo = new MutationObserver(() => { if (dock()) mo.disconnect(); });
+  mo.observe(document.body, { childList: true });
+  setTimeout(() => mo.disconnect(), 10000);
+}
+// ?order=<Id>&view=details|activity|timeline opens that order once the page has loaded (the plugin's launch skill uses it).
+function openFromUrl() {
+  const p = new URLSearchParams(location.search), id = p.get('order');
+  if (!id || !SF_ID.test(id) || !$('#gate').classList.contains('hide')) return;
+  S.oView = ['activity', 'timeline'].includes(p.get('view')) ? p.get('view') : 'details';
+  openOrder(id);
+}
+function showGate(s) {
+  jc.clear(); clearBanner(); document.title = BASE_TITLE;
+  $('#app').classList.add('hide'); $('#gate').classList.remove('hide');
+  $('#gateErr').classList.toggle('hide', !s?.error); $('#gateErr').textContent = s?.error || '';
+  $('#gateWait').classList.toggle('hide', !s?.loginInProgress);
+}
+function showApp(s) {
+  $('#gate').classList.add('hide'); $('#app').classList.remove('hide');
+  $('#orgName').textContent = s.username; $('#orgDot').classList.toggle('demo', !!s.demo);
+  $('#logout').textContent = s.demo ? 'Connect org' : 'Disconnect';
+  loadScopes();
+}
+
+document.querySelectorAll('#gate [data-env]').forEach((b) => b.onclick = async () => {
+  const env = b.dataset.env, url = $('#customUrl').value.trim();
+  if (BROWSER) { // leaves the page for the org's login screen; boot() finishes the sign-in when it comes back
+    try { await (await browserAuth()).login(env === 'borg' ? $('#bDomain').value : undefined, env === 'borg' ? $('#bClient').value : undefined); }
+    catch (e) { showGate({ error: e.message }); }
+    return;
+  }
+  try {
+    await j(`/api/login?env=${env}${env === 'custom' ? '&url=' + encodeURIComponent(url) : ''}`, { method: 'POST' });
+    $('#gateErr').classList.add('hide'); $('#gateWait').classList.remove('hide');
+    const t = setInterval(async () => { const s = await j('/api/status'); if (s.connected) { clearInterval(t); showApp(s); load(); } else if (!s.loginInProgress) { clearInterval(t); showGate({ ...s, error: s.error || 'Sign-in was not completed. Try again.' }); } }, 2000);
+  } catch (e) { showGate({ error: e.message }); }
+});
+$('#logout').onclick = async () => {
+  if (DEMO) { location.href = location.pathname; return; }
+  if (BROWSER) await (await browserAuth()).logout(); else await j('/api/logout', { method: 'POST' });
+  clearTimeout(pollTimer); showGate({});
+};
+$('#refresh').onclick = () => { S.policyBook = null; if (S.scopes === undefined) loadScopes(); load(); }; // the policies are read once; Refresh reads them again
+$('#banner').addEventListener('click', (e) => { if (e.target.closest('[data-retry]')) { load(); $('#refresh').focus(); } });
+// Theme: CSS variables do all the work, so switching needs no re-render; the head script applied the saved one already.
+function setTheme(t) {
+  if (t !== 'slds-light' && t !== 'slds-dark') t = 'standard';
+  if (t === 'standard') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = t;
+  try { localStorage.setItem('omc.theme', t); } catch {}
+  window.omcTheme = () => t;
+  document.querySelectorAll('[data-theme-v]').forEach((b) => { b.classList.toggle('on', b.dataset.themeV === t); b.setAttribute('aria-checked', b.dataset.themeV === t); });
+}
+// Theme menu: the icon opens it; picking a theme, Escape or a click elsewhere closes it.
+function themeMenu(c, open) { c.querySelector('.theme-menu').classList.toggle('hide', !open); c.querySelector('.theme-btn').setAttribute('aria-expanded', open); }
+document.querySelectorAll('.theme-ctl').forEach((c) => {
+  c.onclick = (e) => {
+    const b = e.target.closest('[data-theme-v]');
+    if (b) { setTheme(b.dataset.themeV); themeMenu(c, false); c.querySelector('.theme-btn').focus(); return; }
+    if (e.target.closest('.theme-btn')) { const open = c.querySelector('.theme-menu').classList.contains('hide'); themeMenu(c, open); if (open) (c.querySelector('.theme-menu .on') || c.querySelector('[data-theme-v]')).focus(); }
+  };
+  c.onkeydown = (e) => {
+    if (e.key === 'Escape' && !c.querySelector('.theme-menu').classList.contains('hide')) { e.stopPropagation(); themeMenu(c, false); c.querySelector('.theme-btn').focus(); }
+    else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && e.target.closest('.theme-menu')) { e.preventDefault(); const items = [...c.querySelectorAll('[data-theme-v]')]; items[(items.indexOf(e.target) + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus(); }
+  };
+});
+document.addEventListener('click', (e) => document.querySelectorAll('.theme-ctl').forEach((c) => { if (!c.contains(e.target)) themeMenu(c, false); }));
+setTheme(window.omcTheme());
+$('#range').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; S.range = b.dataset.v; $('#range').querySelectorAll('button').forEach((x) => pressed(x, x === b)); S.seen = new Set(); load(); if (S.mode !== 'service' && S.prod && S.range !== 'all') loadInventory(); };
+$('#live').onclick = () => setLive(!S.live);
+$('#mode').onclick = (e) => { const b = e.target.closest('button'); if (b) setMode(b.dataset.m); };
+// Skip to content: past the top bar to the view on screen (a plain #hash would change the route).
+$('#skip').onclick = (e) => {
+  e.preventDefault();
+  const v = $('#app').classList.contains('hide') ? $('#gate') : $({ console: '.grid', dashboard: '#dash', service: '#service', limits: '#limits' }[S.mode]);
+  v.tabIndex = -1; v.focus();
+};
+$('#period').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; period = b.dataset.v; $('#period').querySelectorAll('button').forEach((x) => pressed(x, x === b)); load(); };
+for (const s of ['#mode', '#range', '#period']) $(s).querySelectorAll('button').forEach((x) => pressed(x, x.classList.contains('on')));
+const svcHash = () => `#service${S.custId ? '/' + S.custId : ''}`;
+function syncMode() {
+  $('#mode').querySelectorAll('button').forEach((x) => pressed(x, x.dataset.m === S.mode));
+  $('#range').classList.toggle('hide', S.mode === 'dashboard' || S.mode === 'limits'); $('#period').classList.toggle('hide', S.mode !== 'dashboard');
+  $('#range [data-v="all"]').classList.toggle('hide', S.mode !== 'service');
+  $('#scope').classList.toggle('hide', !['console', 'dashboard'].includes(S.mode) || !(S.scopes?.stores?.length || S.scopes?.channels?.length));
+  $('#app').classList.toggle('dashmode', S.mode === 'dashboard'); $('#dash').classList.toggle('hide', S.mode !== 'dashboard');
+  $('#app').classList.toggle('servicemode', S.mode === 'service'); $('#service').classList.toggle('hide', S.mode !== 'service');
+  $('#app').classList.toggle('limitsmode', S.mode === 'limits'); $('#limits').classList.toggle('hide', S.mode !== 'limits');
+  if (S.mode === 'limits') limEnter(); else limLeave();
+}
+const markRange = () => $('#range').querySelectorAll('button').forEach((x) => pressed(x, x.dataset.v === S.range));
+function setMode(m) {
+  // "All open" only exists on the queue; the console goes back to its default range.
+  if (m !== 'service' && S.range === 'all') { S.range = '90d'; markRange(); }
+  S.mode = m; history.replaceState(null, '', m === 'dashboard' ? `#dashboard/${S.dtab}` : m === 'service' ? svcHash() : m === 'limits' ? '#limits' : location.pathname + location.search);
+  syncMode(); syncEvery(); closeDrawer(); hideDTip(); clearBanner(); syncTitle(); load(); S.agent?.contextChanged();
+}
+$('#flowsOn').onchange = () => renderMap();
+
+// The Store and Sales channel filters: read what the org offers once a sign-in, then each pick reloads the view on screen (and
+// the map's product, whose order counts follow them). A list the org can't offer hides its picker; a pick it no longer lists is dropped.
+// A failed read leaves S.scopes undefined (not known yet), and Refresh reads them again.
+const scopeFields = (payload) => (payload?.scope ? Object.fromEntries(Object.entries(payload.scope).filter(([, v]) => v)) : {});
+async function loadScopes() {
+  let o;
+  try { o = DEMO ? demoFilters() : await j('/api/filters'); } catch (e) { if (isAuthFailure(e)) return; console.warn('Store and Sales channel filters:', e.message); } // the views show the whole org until Refresh reads them
+  S.scopes = o;
+  for (const [sel, key, list] of [['#fStore', 'store', o?.stores], ['#fChannel', 'channel', o?.channels]]) {
+    const el = $(sel);
+    const opts = scopeNames(list).map((x) => '<option value="' + esc(x.id) + '">' + esc(x.name) + '</option>').join('');
+    el.innerHTML = `<option value="">${key === 'store' ? 'All stores' : 'All channels'}</option>${opts}`;
+    if (!list?.some((x) => x.id === S[key])) S[key] = '';
+    el.value = S[key]; $(sel + 'L').classList.toggle('hide', !list?.length);
+  }
+  syncMode();
+}
+for (const [sel, key] of [['#fStore', 'store'], ['#fChannel', 'channel']]) $(sel).onchange = (e) => {
+  S[key] = e.target.value; S.seen = new Set(); load();
+  if (S.mode === 'console' && S.prod && S.range !== 'all') loadInventory();
+  S.agent?.contextChanged();
+};
+
+function liveUI(on) {
+  S.live = on;
+  $('#live').classList.toggle('paused', !on); $('#live span').textContent = on ? 'Live' : 'Paused'; $('#live').title = 'Turn automatic refresh on or off (Space)';
+  const svg = $('#map'); on && !REDUCED.matches ? svg.unpauseAnimations() : svg.pauseAnimations();
+  limPill(); syncTitle();
+}
+// One picker for the view on screen: Off is passive (no calls), any other choice is Live at that interval, remembered per view.
+function syncEvery() {
+  $('#every').value = S.live ? String(everyMs() / 1000) : 'off';
+  $('#every').title = S.live ? `Asks the org for this view every ${everyMs() / 60000} min. Each refresh is several API calls on the org's daily limit${S.mode === 'limits' ? ' (about one here)' : ' (dozens on the console)'}. Space turns it off.` : 'Off: no calls to the org except Refresh. Pick an interval to turn Live on (Space).';
+}
+$('#every').onchange = (e) => {
+  if (e.target.value === 'off') return setLive(false);
+  try { localStorage.setItem(EVERY_KEY[S.mode] || `omc.every.${S.mode}`, e.target.value); } catch { /* the choice just isn't kept */ }
+  if (S.live) { clearTimeout(pollTimer); pollTimer = setTimeout(poll, pollMs()); if (S.mode === 'limits') limPaintHead(); syncEvery(); } else setLive(true);
+};
+function setLive(on) {
+  liveUI(on);
+  clearTimeout(pollTimer); if (on) load();
+  limSync(); syncEvery();
+}
+
+const VIEW_NAME = { console: 'the console', dashboard: 'the dashboard', service: 'the service queue', limits: 'the limits' };
+// A failed load keeps the old data and its labels; the banner names what was asked for and what is still shown.
+function loadFailed(m, want, message) {
+  const [payload, labels, shown] = { console: [S.data, RANGE_LABEL, shownRange], dashboard: [S.dash, PERIOD_LABEL, shownPeriod], service: [S.svc, RANGE_LABEL, () => shownKey(S.svc, 'range', S.range, RANGE_LABEL)], limits: [lim.d, {}, () => ''] }[m];
+  showBanner(loadProblem(VIEW_NAME[m], failNote(labels, want, shown(), !!payload), message, !!payload, payload?.at && new Date(payload.at).toLocaleTimeString()));
+}
+function showBanner(p) {
+  const el = $('#banner'), sig = `${p.kind}|${p.head}|${p.text}`;
+  if (el.dataset.sig !== sig) { // an identical repeat (a failed Live poll) isn't announced again
+    el.className = `banner${p.kind === 'err' ? ' err' : ''}`; el.setAttribute('role', p.kind === 'err' ? 'alert' : 'status'); el.dataset.sig = sig;
+    el.innerHTML = `<b>${esc(p.head)}</b><span>${esc(p.text)}</span><button data-retry>Retry</button>`;
+  }
+  $('#app').classList.add('bnshown');
+}
+function clearBanner() {
+  const el = $('#banner'); if (el.classList.contains('hide')) return;
+  el.className = 'banner hide'; el.textContent = ''; el.removeAttribute('role'); delete el.dataset.sig; $('#app').classList.remove('bnshown');
+}
+// Live on in the console: the tab strip carries the open-exceptions count (the KPI's number, so it follows the range).
+function syncTitle() {
+  const n = S.data?.kpis?.ok ? S.data.kpis.data.openExceptions : null;
+  document.title = $('#app').classList.contains('hide') ? BASE_TITLE : tabTitle(S.live, S.mode, n);
+}
+// What load() asks for the view on screen, with the Store and Sales channel picked on the console and the Dashboard.
+async function viewPayload(m, want, scope) {
+  if (m === 'console') return DEMO ? demoData(want, scope) : j(`/api/console?range=${want}${scopeQuery(scope)}`);
+  if (m === 'dashboard') return DEMO ? demoDash(want, scope) : j(`/api/dashboard?period=${want}${scopeQuery(scope)}`);
+  if (m === 'limits') return limLoad();
+  return DEMO ? demoService(want) : j(`/api/service/queue?range=${want}`);
+}
+async function load() {
+  jc.clear();
+  clearTimeout(pollTimer); missed = false;
+  // Each refresh takes a few seconds; only the newest request may paint, so a slow earlier range can't overwrite a newer pick.
+  const seq = ++loadSeq, m = S.mode, want = m === 'dashboard' ? period : S.range, scope = { store: S.store || null, channel: S.channel || null };
+  $('#app').classList.add('loading');
+  try {
+    const next = await viewPayload(m, want, scope);
+    if (seq !== loadSeq) return;
+    clearBanner();
+    if (m === 'console') { S.data = next; render(); } else if (m === 'dashboard') { S.dash = next; renderDash(); } else if (m === 'limits') limApply(next); else { S.svc = next; renderQueue(); if (S.custId && !S.custBusy && S.custFailed !== S.custId && S.custId.slice(0, 15) !== (S.cust?.account?.Id || '').slice(0, 15)) loadCustomer(S.custId, { focusOrder: S.custFocus }); }
+    $('#updated').textContent = `Updated ${new Date(next.at).toLocaleTimeString()}`;
+  } catch (e) {
+    if (seq !== loadSeq) return;
+    if (isAuthFailure(e)) return showGate({ error: e.message });
+    $('#updated').textContent = 'Refresh failed'; loadFailed(m, want, e.message);
+  } finally { if (seq === loadSeq) $('#app').classList.remove('loading'); }
+  // At the view's own interval (5m unless chosen otherwise): each console refresh is dozens of API calls against the org's daily limit.
+  if (S.live && seq === loadSeq) pollTimer = setTimeout(poll, pollMs());
+}
+// No polling while the page is out of focus (hidden tab, minimised or another window active); a poll missed while away runs as soon as it's back.
+const away = () => document.hidden || (S.mode !== 'limits' && !document.hasFocus()); // a wallboard tab on screen keeps running without focus
+function poll() { if (away()) missed = true; else load(); }
+function resume() { if (S.live && missed && !away()) { missed = false; load(); } }
+addEventListener('focus', resume); document.addEventListener('visibilitychange', resume);
+
+const { render, perr, rows, renderMap, loadInventory, clearProduct, zoomBy, mapZone, toggleFull, resetZoom, statusColor, stackBar, place, pill, shortDate } = createMapView({ REDUCED, j, openAny: (...a) => openAny(...a), openRecord: (...a) => openRecord(...a), rangeText, syncTitle });
+const { dp, renderDash, setDTab, hideDTip } = createDashView({ DOMAINS, SF_ID, closeDrawer: (...a) => closeDrawer(...a), closeModal: (...a) => closeModal(...a), enterLayer: (...a) => enterLayer(...a), j, loadInventory, openAny: (...a) => openAny(...a), openOrder: (...a) => openOrder(...a), perr, pill, setMode, shownPeriod, stackBar });
+const { STEPS, stepOf, openOrder, closeDrawer, openAny, recAttr, caseRows, acctLink, openRecord, closeModal, enterLayer, drawerFacts } = createDrawers({ DOMAINS, MODES, clearProduct, j, mapZone, moveQueue: (...a) => moveQueue(...a), openQueueItem: (...a) => openQueueItem(...a), pill, place, renderMap, resetZoom, setDTab, setLive, setMode, shortDate, statusColor, toggleFull, zoomBy });
+const { renderQueue, openQueueItem, moveQueue, loadCustomer, clearCustomer } = createServiceView({ STEPS, acctLink, caseRows, j, openAny, openOrder, openRecord, perr, pill, recAttr, shortDate, showGate, stepOf, svcHash });
+// The address bar: a view, a dashboard tab or a customer (#dashboard/<tab>, #limits, #service/<account Id>).
+addEventListener('hashchange', () => {
+  const [h, k] = location.hash.split('/');
+  if (h === '#dashboard') { if (k) setDTab(k); if (S.mode !== 'dashboard') setMode('dashboard'); }
+  else if (h === '#limits') { if (S.mode !== 'limits') setMode('limits'); }
+  else if (h === '#service') {
+    const id = SF_ID.test(k || '') ? k : null;
+    if (S.mode !== 'service') { S.custId = id; setMode('service'); }
+    else if (id && id !== S.custId) loadCustomer(id);
+    else if (!id && S.custId) clearCustomer();
+  }
+});
+if (S.mode !== 'console') syncMode();
+const AGENT_OPENS = new Set(['OrderSummary', 'Account', 'FulfillmentOrder', 'ReturnOrder', 'Shipment', 'Case', 'ProcessException']);
+import('./agent-panel.js').then((m) => { S.agent = m.mountAgent({ j, getContext: getAgentContext, demo: DEMO, demoReply: demoAgent, onSignedOut: showGate, root: $('#app'),
+  // A record Agentforce names by link opens in the drawer, as a row's click does.
+  records: { canOpen: (o) => AGENT_OPENS.has(o), open: (o, id) => openAny(o, id) } }); })
+  .catch((e) => console.warn('The Agentforce panel did not load:', e));
+boot().catch((e) => showGate({ error: e.message }));
+</script>
+</body>
+</html>

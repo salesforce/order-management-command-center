@@ -1,0 +1,16 @@
+{
+  "required": [
+    "query"
+  ],
+  "unevaluatedProperties": false,
+  "properties": {
+    "query": {
+      "title": "SOQL query",
+      "description": "One SOQL SELECT on Order Management objects, such as SELECT SalesStore.Name s, COUNT(Id) n FROM OrderSummary WHERE OrderedDate = LAST_N_DAYS:30 GROUP BY SalesStore.Name ORDER BY COUNT(Id) DESC",
+      "lightning:type": "lightning__textType",
+      "lightning:isPII": false,
+      "copilotAction:isUserInput": true
+    }
+  },
+  "lightning:type": "lightning__objectType"
+}
